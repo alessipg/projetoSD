@@ -19,17 +19,24 @@ public class ClientHandler implements Runnable {
                 );
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
-            out.println("Welcome! You are connected to the server.");
-
             String message;
             while ((message = in.readLine()) != null) {
                 System.out.println("Received from client: " + message);
-
-                // Example: echo protocol (just send back what client says)
-                out.println("Echo: " + message);
-
-                // You can add here your custom protocol parsing:
-                // e.g. if message starts with "LOGIN:", call a login service
+                
+                try {
+                    String response = JsonRouter.parse(message);
+                    if (response != null && !response.isEmpty()) {
+                        System.out.println("Sending response: " + response);
+                        out.println(response); // Envia a resposta JSON do JsonRouter
+                    } else {
+                        String errorResponse = "{\"status\":\"500\",\"message\":\"No response generated\"}";
+                        System.out.println("Sending error response: " + errorResponse);
+                        out.println(errorResponse);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error processing message: " + e.getMessage());
+                    out.println("Error: " + e.getMessage());
+                }
             }
 
         } catch (IOException e) {

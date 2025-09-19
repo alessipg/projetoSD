@@ -4,9 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.io.Serializable;
+import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 public class Usuario implements Serializable {
 
@@ -15,6 +19,7 @@ public class Usuario implements Serializable {
     private int id;
     private String nome;
     private String senha;
+    private boolean isAdmin = false;
 
     public Usuario(int id, String nome, String senha) {
         this.id = id;
@@ -29,27 +34,11 @@ public class Usuario implements Serializable {
     public Usuario(String nome, String senha) {
         this.nome = nome;
         this.senha = senha;
+        if(Objects.equals(nome, "admin") && Objects.equals(senha, "admin"))
+            isAdmin = true;
+
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
 
     @Override
     public String toString() {
