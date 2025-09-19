@@ -6,10 +6,10 @@
              version="2.1">
 
     <persistence-unit name="projeto-sd" transaction-type="RESOURCE_LOCAL">
-        <class>org.alessipg.model.Usuario</class>
-        <class>org.alessipg.model.Filme</class>
-        <class>org.alessipg.model.Genero</class>
-        <class>org.alessipg.model.Review</class>
+        <class>org.alessipg.shared.domain.model.Usuario</class>
+        <class>org.alessipg.shared.domain.model.Filme</class>
+        <class>org.alessipg.shared.domain.model.Genero</class>
+        <class>org.alessipg.shared.domain.model.Review</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url"
                       value="jdbc:mysql://localhost/projeto_sd?useSSL=false&amp;serverTimezone=UTC" />
