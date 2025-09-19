@@ -1,3 +1,4 @@
+
 package org.alessipg.server.infra.tcp;
 
 import java.io.IOException;
@@ -6,7 +7,17 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 public class TcpServer {
+  public static interface ClientConnectionListener {
+    void onClientConnected(String clientAddress, int clientPort);
+  }
+
+  private ClientConnectionListener connectionListener;
+
+  public void setClientConnectionListener(ClientConnectionListener listener) {
+    this.connectionListener = listener;
+  }
 
   private int port;
   private boolean running = false;
@@ -25,6 +36,13 @@ public class TcpServer {
       while (running) {
         Socket clientSocket = serverSocket.accept();
         System.out.println("Client connected: " + clientSocket.getRemoteSocketAddress());
+
+        // Notifica a interface sobre a nova conexão
+          if (connectionListener != null) {
+          String clientIp = clientSocket.getInetAddress().getHostAddress();
+          int clientPort = clientSocket.getPort();
+          connectionListener.onClientConnected(clientIp, clientPort);
+        }
 
         // Spawn handler in separate thread
         ClientHandler handler = new ClientHandler(clientSocket);

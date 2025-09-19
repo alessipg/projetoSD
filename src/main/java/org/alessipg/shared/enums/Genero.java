@@ -1,4 +1,4 @@
-package org.alessipg.shared.domain.model;
+package org.alessipg.shared.enums;
 
 public enum Genero {
     ACAO("Ação"),

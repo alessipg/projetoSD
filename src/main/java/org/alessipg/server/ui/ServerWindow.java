@@ -51,7 +51,18 @@ public class ServerWindow {
                 String port = portField.getText();
                 statusLabel.setText("Server started on port " + port);
                 TcpServer tcpServer = new TcpServer(Integer.parseInt(port));
-                tcpServer.start();
+
+                // Listener para novas conexões
+                tcpServer.setClientConnectionListener((clientAddress, clientPort) -> {
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText("Cliente conectado: " + clientAddress + ":" + clientPort);
+                    });
+                });
+
+                // Inicia o servidor em uma thread separada
+                Thread serverThread = new Thread(() -> tcpServer.start());
+                serverThread.setDaemon(true);
+                serverThread.start();
             }
         });
 

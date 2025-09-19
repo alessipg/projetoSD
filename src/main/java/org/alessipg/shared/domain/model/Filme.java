@@ -8,7 +8,11 @@ import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.persistence.ElementCollection;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class Filme implements Serializable {
 
@@ -36,65 +40,5 @@ public class Filme implements Serializable {
 
     public Filme() {
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDiretor() {
-        return diretor;
-    }
-
-    public void setDiretor(String diretor) {
-        this.diretor = diretor;
-    }
-
-    public int getAno() {
-        return ano;
-    }
-
-    public void setAno(int ano) {
-        this.ano = ano;
-    }
-
-    public List<String> getGeneros() {
-        return generos;
-    }
-
-    public void setGeneros(List<String> generos) {
-        this.generos = generos;
-    }
-
-    public float getNota() {
-        return nota;
-    }
-
-    public void setNota(float nota) {
-        this.nota = nota;
-    }
-
-    public int getQtdAvaliacoes() {
-        return qtdAvaliacoes;
-    }
-
-    public void setQtdAvaliacoes(int qtdAvaliacoes) {
-        this.qtdAvaliacoes = qtdAvaliacoes;
-    }
-
-    public String getSinopse() {
-        return sinopse;
-    }
-
-    public void setSinopse(String sinopse) {
-        this.sinopse = sinopse;
     }
 }
