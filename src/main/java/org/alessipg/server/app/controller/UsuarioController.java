@@ -1,19 +1,27 @@
 package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.UsuarioService;
-
+import org.alessipg.shared.records.StatusResponse;
+import org.alessipg.shared.records.UserLoginResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 public class UsuarioController {
-    private final UsuarioService usuarioService;
-  
-    public UsuarioController(UsuarioService usuarioService) {
-      this.usuarioService = usuarioService;
-    }
-  
-//    public UsuarioResponse criar(UsuarioCreateRequest req) {
-//      // validar req (nome não vazio, senha com política)
-//      Usuario usuario = usuarioService.criarUsuario(req.getNome(), req.getSenha());
-//      return new UsuarioResponse(usuario.getId(), usuario.getNome());
-//    }
-  } 
-    
+  private final UsuarioService usuarioService;
+  private final Gson gson;
 
+  public UsuarioController(UsuarioService usuarioService) {
+    this.usuarioService = usuarioService;
+    this.gson = new GsonBuilder().create();
+  }
+
+  public String criar(JsonObject json) {
+    JsonObject usuario = json.get("usuario").getAsJsonObject();
+    String nome = usuario.get("nome").getAsString();
+    String senha = usuario.get("senha").getAsString();
+
+    StatusResponse status = usuarioService.criar(nome, senha);
+    return gson.toJson(status);
+  }
+
+}

@@ -9,7 +9,7 @@ import jakarta.persistence.NoResultException;
 
 import java.util.Optional;
 
-public class UsuarioRepository {
+public class UsuarioRepository implements AutoCloseable {
     private EntityManagerFactory emf;
     
     public UsuarioRepository() {
@@ -57,9 +57,11 @@ public class UsuarioRepository {
         }
     }
 
-    public void close() {
+    @Override
+    public void close() throws Exception {
         if (emf != null && emf.isOpen()) {
             emf.close();
+            System.out.println("EntityManagerFactory fechado com sucesso.");
         }
     }
 }

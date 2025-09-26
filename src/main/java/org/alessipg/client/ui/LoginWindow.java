@@ -7,12 +7,14 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.alessipg.client.app.clientservice.AuthClientService;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.client.infra.tcp.TcpClientHolder;
+import org.alessipg.shared.enums.StatusTable;
 public class LoginWindow extends JFrame {
-    private TcpClient client;
 
-    public LoginWindow(TcpClient client) {
-        this.client = client;
+    public LoginWindow() {
+        TcpClient client = TcpClientHolder.get();
         setTitle("Tela de Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -83,7 +85,27 @@ public class LoginWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    client.login(txtUsuario.getText(), txtSenha.getText());
+                    AuthClientService auth = new AuthClientService();
+                    StatusTable res = auth.login(txtUsuario.getText(), new String(txtSenha.getPassword()));
+                    switch(res){
+                        case OK:
+                            MovieListWindow movieListWindow = new MovieListWindow();
+                            movieListWindow.setVisible(true);
+                            dispose(); // Fecha a janela de login
+                            break;
+                        case UNAUTHORIZED:
+                            JOptionPane.showMessageDialog(null, "Usuário ou senha incorretos. Tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        case BAD:
+                            JOptionPane.showMessageDialog(null, "Erro na requisição. Verifique os dados e tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        case INTERNAL_SERVER_ERROR:
+                            JOptionPane.showMessageDialog(null, "Erro interno do servidor. Tente novamente mais tarde.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "Erro desconhecido. Código: " + res, "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                    }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -94,7 +116,29 @@ public class LoginWindow extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                try {
+                    AuthClientService auth = new AuthClientService();
+                    StatusTable res = auth.criarUsuario(txtUsuario.getText(), new String(txtSenha.getPassword()));
+                    switch(res){
+                        case OK:
+                            JOptionPane.showMessageDialog(null, "Usuário criado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            break;
+                        case BAD:
+                            JOptionPane.showMessageDialog(null, "Erro na requisição. Verifique os dados e tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        case ALREADY_EXISTS:
+                            JOptionPane.showMessageDialog(null, "Usuário já existe. Tente outro nome de usuário.", "Conflito", JOptionPane.WARNING_MESSAGE);
+                            break;
+                        case INTERNAL_SERVER_ERROR:
+                            JOptionPane.showMessageDialog(null, "Erro interno do servidor. Tente novamente mais tarde.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "Erro desconhecido. Código: " + res, "Erro", JOptionPane.ERROR_MESSAGE);
+                            break;
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
