@@ -46,4 +46,17 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>org.alessipg.server.main.ServerMain</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

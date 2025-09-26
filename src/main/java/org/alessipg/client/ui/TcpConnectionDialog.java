@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.regex.Pattern;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.client.infra.tcp.TcpClientHolder;
 
 public class TcpConnectionDialog extends JPanel {
     private final JTextField ipField = new JTextField();
@@ -178,13 +179,13 @@ public class TcpConnectionDialog extends JPanel {
                 if (success) {
                     statusLabel.setForeground(new Color(0, 128, 0));
                     statusLabel.setText(message);
-                    // Crie o TcpClient e vá para o login
                     TcpClient client = new TcpClient(host, port);
                     try {
                         client.connect();
+                        TcpClientHolder.set(client);
                         SwingUtilities.invokeLater(() -> {
-                            LoginWindow tela = new LoginWindow(client);
-                            tela.setVisible(true); // IMPORTANTE: tornar a janela visível
+                            LoginWindow tela = new LoginWindow();
+                            tela.setVisible(true);
                         });
                         connectButton.setEnabled(false);
                     } catch (IOException ex) {

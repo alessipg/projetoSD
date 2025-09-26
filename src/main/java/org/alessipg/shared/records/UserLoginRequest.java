@@ -1,8 +1,8 @@
 package org.alessipg.shared.records;
 
-public record UserLoginRequest(String operacao, String user, String senha) {
-    // Construtor de conveniência
-    public UserLoginRequest(String user, String senha) {
-        this("LOGIN", user, senha);
+public record UserLoginRequest(String operacao, String usuario, String senha) {
+
+    public UserLoginRequest(String usuario, String senha) {
+        this("LOGIN", usuario, senha);
     }
 }
