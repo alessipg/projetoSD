@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.client.infra.tcp.TcpClientHolder;
+import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.UserLoginRequest;
+import org.alessipg.shared.records.UserLogoutRequest;
 import org.alessipg.shared.util.IntegerAsStringAdapter;
 import org.alessipg.shared.records.UserRegisterRequest;
 
@@ -32,11 +34,21 @@ public class AuthClientService {
         if (response != null) {
             JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
             String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+
             switch (status) {
-                case "200": return StatusTable.OK;
-                case "401": return StatusTable.UNAUTHORIZED;
-                case "500": return StatusTable.INTERNAL_SERVER_ERROR;
-                default: return StatusTable.IM_TEAPOT;
+                case "200":
+                    // Login bem-sucedido - extrair e armazenar token
+                    String token = jsonObject.has("token") ? jsonObject.get("token").getAsString() : null;
+                    if (token != null)
+                        SessionManager.getInstance().setToken(token);
+
+                    return StatusTable.OK;
+                case "401":
+                    return StatusTable.UNAUTHORIZED;
+                case "500":
+                    return StatusTable.INTERNAL_SERVER_ERROR;
+                default:
+                    return StatusTable.IM_TEAPOT;
             }
         } else {
             return StatusTable.INTERNAL_SERVER_ERROR;
@@ -53,11 +65,43 @@ public class AuthClientService {
             JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
             String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
             switch (status) {
-                case "201": return StatusTable.OK;
-                case "400": return StatusTable.BAD;
-                case "409": return StatusTable.ALREADY_EXISTS;
-                case "500": return StatusTable.INTERNAL_SERVER_ERROR;
-                default: return StatusTable.IM_TEAPOT;
+                case "201":
+                    return StatusTable.OK;
+                case "400":
+                    return StatusTable.BAD;
+                case "409":
+                    return StatusTable.ALREADY_EXISTS;
+                case "500":
+                    return StatusTable.INTERNAL_SERVER_ERROR;
+                default:
+                    return StatusTable.IM_TEAPOT;
+            }
+        } else {
+            return StatusTable.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public StatusTable logout() throws IOException {
+        String token = SessionManager.getInstance().getToken();
+        UserLogoutRequest msg = new UserLogoutRequest(token);
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            switch (status) {
+                case "201":
+                    SessionManager.getInstance().setToken(null);
+                    return StatusTable.OK;
+                case "400":
+                    return StatusTable.BAD;
+                case "409":
+                    return StatusTable.ALREADY_EXISTS;
+                case "500":
+                    return StatusTable.INTERNAL_SERVER_ERROR;
+                default:
+                    return StatusTable.IM_TEAPOT;
             }
         } else {
             return StatusTable.INTERNAL_SERVER_ERROR;

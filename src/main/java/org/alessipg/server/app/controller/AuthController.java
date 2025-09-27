@@ -1,7 +1,12 @@
 package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.AuthService;
+import org.alessipg.server.util.JwtUtil;
+import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.records.StatusResponse;
 import org.alessipg.shared.records.UserLoginResponse;
+
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -27,7 +32,9 @@ public class AuthController {
     }
 
     public String logout(JsonObject json) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'logout'");
+        String token = json.get("token").getAsString();
+        
+        StatusResponse status = authService.logout(JwtUtil.validarToken(token));
+        return gson.toJson(status);
     }
 }
