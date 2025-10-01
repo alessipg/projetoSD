@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.alessipg.client.ui.TcpConnectionController"
+            prefWidth="420" prefHeight="160">
+    <center>
+        <GridPane hgap="8" vgap="8">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <Label text="IP / Host:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="ipField" GridPane.rowIndex="0" GridPane.columnIndex="1" promptText="127.0.0.1"/>
+            <Label text="Porta:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="portField" GridPane.rowIndex="1" GridPane.columnIndex="1" promptText="8080"/>
+        </GridPane>
+    </center>
+    <bottom>
+        <VBox spacing="8">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <Label fx:id="statusLabel" text=" " />
+            <HBox spacing="8">
+                <Button fx:id="cancelButton" text="Cancelar" onAction="#onCancel" disable="true"/>
+                <Button fx:id="connectButton" text="Conectar" onAction="#onConnect"/>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

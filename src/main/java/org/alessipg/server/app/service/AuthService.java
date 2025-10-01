@@ -2,18 +2,24 @@ package org.alessipg.server.app.service;
 
 import java.util.Optional;
 
+import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.domain.model.Usuario;
 import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.records.StatusResponse;
 import org.alessipg.shared.records.UserLoginResponse;
+
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class AuthService {
 
-    private final UsuarioService usuarioService;
-    public AuthService(UsuarioService usuarioService){
-        this.usuarioService = usuarioService;
-    }
-      public UserLoginResponse login(String usuario, String senha) {
+  private final UsuarioService usuarioService;
+
+  public AuthService(UsuarioService usuarioService) {
+    this.usuarioService = usuarioService;
+  }
+
+  public UserLoginResponse login(String usuario, String senha) {
     Optional<Usuario> usuarioOpt = usuarioService.buscarPorNome(usuario);
 
     if (!usuarioOpt.isPresent()) {
@@ -30,8 +36,16 @@ public class AuthService {
     String token = JwtUtil.gerarToken(
         userOpt.getId(),
         userOpt.getNome(),
-        "usuario");
+        userOpt.isAdmin() ? "admin" : "usuario");
     System.out.println("Login successful. Token: " + token);
+    ServerView.addUser(userOpt.getNome());
     return new UserLoginResponse(StatusTable.OK, token);
+  }
+
+  public StatusResponse logout(DecodedJWT validarToken) {
+    String user = validarToken.getClaim("usuario").toString();
+    System.out.println("Usuário " + user + " desconectando...");
+    ServerView.removeUser(user);
+    return new StatusResponse(StatusTable.OK);
   }
 }

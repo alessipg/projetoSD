@@ -1,7 +1,7 @@
 package org.alessipg.server.infra.config;
 
 import org.alessipg.server.app.controller.AuthController;
-import org.alessipg.server.app.controller.UsuarioController;
+import org.alessipg.server.app.controller.UserController;
 import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.app.service.UsuarioService;
 import org.alessipg.server.infra.repo.UsuarioRepository;
@@ -10,10 +10,6 @@ import org.alessipg.server.infra.tcp.JsonRouter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Container de injeção de dependência para organizar e gerenciar
- * todas as dependências da aplicação.
- */
 public class ApplicationContainer implements AutoCloseable {
     
     private final List<AutoCloseable> resources;
@@ -26,32 +22,47 @@ public class ApplicationContainer implements AutoCloseable {
     private final AuthService authService;
     
     // Controllers
-    private final UsuarioController usuarioController;
+    private final UserController usuarioController;
     private final AuthController authController;
     
     public ApplicationContainer() {
+        System.out.println("Iniciando ApplicationContainer...");
         this.resources = new ArrayList<>();
         
         // Inicializar repositories
+        System.out.println("Inicializando UsuarioRepository...");
         this.usuarioRepository = new UsuarioRepository();
         this.resources.add(usuarioRepository);
+        System.out.println("UsuarioRepository inicializado.");
         
         // Inicializar services
+        System.out.println("Inicializando UsuarioService...");
         this.usuarioService = new UsuarioService(usuarioRepository);
+        System.out.println("UsuarioService inicializado.");
+        
+        System.out.println("Inicializando AuthService...");
         this.authService = new AuthService(usuarioService);
+        System.out.println("AuthService inicializado.");
         
         // Inicializar controllers
-        this.usuarioController = new UsuarioController(usuarioService);
+        System.out.println("Inicializando UsuarioController...");
+        this.usuarioController = new UserController(usuarioService);
+        System.out.println("UsuarioController inicializado.");
+        
+        System.out.println("Inicializando AuthController...");
         this.authController = new AuthController(authService);
+        System.out.println("AuthController inicializado.");
         
         // Configurar injeção de dependência no JsonRouter
+        System.out.println("Configurando JsonRouter...");
         this.configureJsonRouter();
+        System.out.println("JsonRouter configurado.");
         
         System.out.println("ApplicationContainer inicializado com sucesso.");
     }
     
     private void configureJsonRouter() {
-        JsonRouter.setUsuarioController(usuarioController);
+        JsonRouter.setUserController(usuarioController);
         JsonRouter.setAuthController(authController);
     }
     
@@ -68,7 +79,7 @@ public class ApplicationContainer implements AutoCloseable {
         return authService;
     }
     
-    public UsuarioController getUsuarioController() {
+    public UserController getUsuarioController() {
         return usuarioController;
     }
     
@@ -88,7 +99,6 @@ public class ApplicationContainer implements AutoCloseable {
                 System.out.println("Recurso " + resource.getClass().getSimpleName() + " fechado com sucesso.");
             } catch (Exception e) {
                 System.err.println("Erro ao fechar recurso: " + e.getMessage());
-                // Log do erro, mas continua fechando os outros recursos
             }
         }
         

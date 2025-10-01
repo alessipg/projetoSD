@@ -1,14 +1,21 @@
 package org.alessipg.client.main;
 
-import javax.swing.*;
-import static org.alessipg.client.ui.TcpConnectionDialog.initClient;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class ClientMain {
+public class ClientMain extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/org/alessipg/client/ui/TcpConnection.fxml"));
+        primaryStage.setTitle("Conexão TCP");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                initClient();
-            }
-        });
+        launch(args);
     }
 }

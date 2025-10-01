@@ -3,9 +3,8 @@ package org.alessipg.server.app.service;
 import org.alessipg.shared.domain.model.Usuario;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.StatusResponse;
-import org.alessipg.shared.records.UserLoginResponse;
 import org.alessipg.server.infra.repo.UsuarioRepository;
-import org.alessipg.server.util.JwtUtil;
+
 
 import java.util.Optional;
 

@@ -3,7 +3,7 @@ package org.alessipg.server.main;
 import javax.swing.*;
 import org.alessipg.server.infra.config.ApplicationContainer;
 
-import static org.alessipg.server.ui.ServerWindow.createAndShowGUI;
+import static org.alessipg.server.ui.ServerView.createAndShowGUI;
 
 public class ServerMain {
 
@@ -11,12 +11,14 @@ public class ServerMain {
         ApplicationContainer container = null;
         
         try {
-            // Inicializar container de dependências
+            System.out.println("Antes de inicializar ApplicationContainer");
             container = new ApplicationContainer();
-            
+            System.out.println("ApplicationContainer inicializado");
+
             // Criar interface gráfica
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
+                    System.out.println("Chamando createAndShowGUI");
                     createAndShowGUI();
                 }
             });
