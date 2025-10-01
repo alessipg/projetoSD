@@ -9,7 +9,8 @@ import com.google.gson.JsonSyntaxException;
 import lombok.Setter;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.server.app.controller.AuthController;
-import org.alessipg.server.app.controller.UsuarioController;
+import org.alessipg.server.app.controller.UserController;
+import org.alessipg.server.app.controller.MovieController;
 import org.alessipg.shared.records.StatusResponse;
 import org.alessipg.shared.util.IntegerAsStringAdapter;
 
@@ -18,9 +19,11 @@ import org.alessipg.shared.util.IntegerAsStringAdapter;
 public class JsonRouter {
     // Setter para injetar dependências
     @Setter
-    private static UsuarioController usuarioController;
+    private static UserController UserController;
     @Setter
-    private static AuthController authController;
+    private static AuthController AuthController;
+    @Setter
+    private static MovieController MovieController;
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Integer.class, new IntegerAsStringAdapter())
@@ -40,17 +43,19 @@ public class JsonRouter {
                 System.err.println("Missing operation");
                 return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
             }
-            String operacao = json.get("operacao").getAsString();
-            System.out.println("Operation: " + operacao);
+            String operation = json.get("operacao").getAsString();
+            System.out.println("Operation: " + operation);
             System.out.println("Full JSON: " + json);
             // Switch na operação
-            switch (operacao) {
+            switch (operation) {
                 case "LOGIN":
-                    return authController.login(json);
+                    return AuthController.login(json);
                 case "LOGOUT":
-                    return authController.logout(json);
+                    return AuthController.logout(json);
                 case "CRIAR_USUARIO":
-                    return usuarioController.criar(json);
+                    return UserController.create(json);
+                case "CRIAR_FILME":
+                    return MovieController.create(json);
                 default:
                     return null;
             }

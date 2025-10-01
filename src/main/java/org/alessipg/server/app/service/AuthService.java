@@ -2,6 +2,7 @@ package org.alessipg.server.app.service;
 
 import java.util.Optional;
 
+import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.domain.model.Usuario;
 import org.alessipg.shared.enums.StatusTable;
@@ -37,12 +38,14 @@ public class AuthService {
         userOpt.getNome(),
         userOpt.isAdmin() ? "admin" : "usuario");
     System.out.println("Login successful. Token: " + token);
+    ServerView.addUser(userOpt.getNome());
     return new UserLoginResponse(StatusTable.OK, token);
   }
 
   public StatusResponse logout(DecodedJWT validarToken) {
     String user = validarToken.getClaim("usuario").toString();
     System.out.println("Usuário " + user + " desconectando...");
+    ServerView.removeUser(user);
     return new StatusResponse(StatusTable.OK);
   }
 }

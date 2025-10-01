@@ -2,15 +2,16 @@ package org.alessipg.shared.enums;
 
 public enum Genero {
     ACAO("Ação"),
+    ANIMACAO("Animação"),
     AVENTURA("Aventura"),
     COMEDIA("Comédia"),
+    DOCUMENTARIO("Documentário"),
     DRAMA("Drama"),
     FANTASIA("Fantasia"),
     FICCAO_CIENTIFICA("Ficção Científica"),
-    TERROR("Terror"),
+    MUSICAL("Musical"),
     ROMANCE("Romance"),
-    DOCUMENTARIO_MUSICAL("Documentário/Musical"),
-    ANIMACAO("Animação");
+    TERROR("Terror");
 
     private final String displayName;
 

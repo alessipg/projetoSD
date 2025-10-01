@@ -12,6 +12,7 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.domain.model.Filme;
 
 public class FilmesViewController {
@@ -32,10 +33,10 @@ public class FilmesViewController {
         // Exemplo de dados mockados
         listFilmes.getItems().addAll(
                 new Filme("O Poderoso Chefão", "Francis Ford Coppola", 1972,
-                        Arrays.asList("Crime", "Drama"), "A saga da família Corleone...", 2000,
+                        Arrays.asList("DRAMA", "ACAO"), "A saga da família Corleone...", 2000,
                         4.8f),
                 new Filme("Interestelar", "Christopher Nolan", 2014,
-                        Arrays.asList("Ficção Científica", "Aventura"),
+                        Arrays.asList("FICCAO_CIENTIFICA", "AVENTURA"),
                         "Um grupo de exploradores viaja através de um buraco de minhoca...", 5000,
                         4.5f));
     }
@@ -47,4 +48,9 @@ public class FilmesViewController {
         Stage stage = (Stage) listFilmes.getScene().getWindow();
         stage.setScene(new Scene(novaTelaRoot));
     }
-}
+
+    @FXML
+    private void onLogout() throws IOException {
+        SessionManager.getInstance().getAuthClientService().logout();
+    }
+}       

@@ -12,13 +12,12 @@ import javafx.scene.control.PasswordField;
 
 import java.io.IOException;
 
-import org.alessipg.client.app.clientservice.AuthClientService;
+import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.enums.StatusTable;
 
 import javafx.event.ActionEvent;
 
 public class LoginViewController {
-    private final AuthClientService authService = new AuthClientService();
 
     @FXML
     private TextField txtUsuario;
@@ -30,7 +29,8 @@ public class LoginViewController {
         String usuario = txtUsuario.getText();
         String senha = txtSenha.getText();
         try {
-            StatusTable res = authService.login(usuario, senha);
+            StatusTable res = SessionManager.getInstance()
+                .getAuthClientService().login(usuario, senha);
             switch (res) {
                 case StatusTable.OK:
                     FXMLLoader loader = new FXMLLoader(
@@ -60,6 +60,7 @@ public class LoginViewController {
             }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
+            alert.setResizable(true);
             alert.setTitle("Erro de conexão");
             alert.setContentText("Erro ao conectar com o servidor: " + e.getMessage());
             alert.showAndWait();

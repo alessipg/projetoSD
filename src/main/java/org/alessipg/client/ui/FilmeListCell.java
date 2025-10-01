@@ -33,7 +33,8 @@ public class FilmeListCell extends ListCell<Filme> {
             setGraphic(null);
         } else {
             lblTitulo.setText(filme.getTitulo() + " (" + filme.getAno() + ")");
-            lblInfo.setText("Diretor: " + filme.getDiretor() + " | Gêneros: " + String.join(", ", filme.getGeneros()));
+            lblInfo.setText("Diretor: " + filme.getDiretor() + " | Gêneros: " +
+                String.join(", ", filme.getGeneros().stream().map(Object::toString).toList()));
             lblNota.setText("Nota: " + filme.getNota() + " (" + filme.getQtdAvaliacoes() + " avaliações)");
             setGraphic(vbox);
         }

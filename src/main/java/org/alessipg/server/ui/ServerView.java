@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerWindow {
+public class ServerView {
     private static JList<String> activeUsersList;
     private static DefaultListModel<String> listModel;
     private static JTextField portField;
@@ -33,8 +33,6 @@ public class ServerWindow {
 
         jFrame.setVisible(true);
 
-        // Add some sample users for demonstration
-        addSampleUsers();
     }
 
     private static JPanel createTopPanel() {
@@ -92,39 +90,6 @@ public class ServerWindow {
         scrollPane.setPreferredSize(new Dimension(550, 300));
 
         panel.add(scrollPane, BorderLayout.CENTER);
-
-        // Add user management buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton addUserButton = new JButton("Add User");
-        JButton removeUserButton = new JButton("Remove User");
-
-        addUserButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String userName = JOptionPane.showInputDialog("Enter username:");
-                if (userName != null && !userName.trim().isEmpty()) {
-                    listModel.addElement(userName);
-                    statusLabel.setText("User '" + userName + "' added");
-                }
-            }
-        });
-
-        removeUserButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = activeUsersList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    String removedUser = listModel.getElementAt(selectedIndex);
-                    listModel.remove(selectedIndex);
-                    statusLabel.setText("User '" + removedUser + "' removed");
-                } else {
-                    statusLabel.setText("Please select a user to remove");
-                }
-            }
-        });
-
-        buttonPanel.add(addUserButton);
-        buttonPanel.add(removeUserButton);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-
         return panel;
     }
 
@@ -140,10 +105,21 @@ public class ServerWindow {
         return panel;
     }
 
-    private static void addSampleUsers() {
-        listModel.addElement("user1");
-        listModel.addElement("user2");
-        listModel.addElement("admin");
+    public static void addUser(String username) {
+        if (!activeUsers.contains(username)) {
+            activeUsers.add(username);
+            SwingUtilities.invokeLater(() -> {
+                listModel.addElement(username);
+            });
+        }
     }
-}
 
+    public static void removeUser(String username) {
+        activeUsers.remove(username);
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("removendo "+username);
+            listModel.removeElement(username);
+        });
+    }
+
+}
