@@ -12,28 +12,28 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-public class Usuario implements Serializable {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nome;
-    private String senha;
+    private String name;
+    private String password;
     private boolean isAdmin = false;
 
-    public Usuario(int id, String nome, String senha) {
+    public User(int id, String name, String password) {
         this.id = id;
-        this.nome = nome;
-        this.senha = senha;
+        this.name = name;
+        this.password = password;
     }
 
-    public Usuario() {
+    public User() {
 
     }
 
-    public Usuario(String nome, String senha) {
-        this.nome = nome;
-        this.senha = senha;
+    public User(String nome, String senha) {
+        this.name = nome;
+        this.password = senha;
         if(Objects.equals(nome, "admin") && Objects.equals(senha, "admin"))
             isAdmin = true;
 
@@ -44,8 +44,8 @@ public class Usuario implements Serializable {
     public String toString() {
         return "Usuario{" +
                 "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", senha='" + senha + '\'' +
+                ", nome='" + name + '\'' +
+                ", senha='" + password + '\'' +
                 '}';
     }
 }

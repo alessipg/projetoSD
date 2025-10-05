@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import lombok.Setter;
+
+import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.server.app.controller.AuthController;
 import org.alessipg.server.app.controller.UserController;
@@ -48,14 +50,19 @@ public class JsonRouter {
             System.out.println("Full JSON: " + json);
             // Switch na operação
             switch (operation) {
+                // Auth
                 case "LOGIN":
                     return AuthController.login(json);
                 case "LOGOUT":
                     return AuthController.logout(json);
+                // Create
                 case "CRIAR_USUARIO":
                     return UserController.create(json);
                 case "CRIAR_FILME":
                     return MovieController.create(json);
+                // Read
+                case "LISTAR_PROPRIO_USUARIO":
+                    return UserController.selfGet(json);
                 default:
                     return null;
             }

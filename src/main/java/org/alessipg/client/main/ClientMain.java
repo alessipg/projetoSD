@@ -1,5 +1,8 @@
 package org.alessipg.client.main;
 
+import org.alessipg.client.infra.config.ClientContainer;
+import org.alessipg.client.infra.session.SessionManager;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

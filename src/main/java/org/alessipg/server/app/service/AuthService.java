@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
-import org.alessipg.shared.domain.model.Usuario;
+import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.StatusResponse;
 import org.alessipg.shared.records.UserLoginResponse;
@@ -13,37 +13,37 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class AuthService {
 
-  private final UsuarioService usuarioService;
+  private final UserService userService;
 
-  public AuthService(UsuarioService usuarioService) {
-    this.usuarioService = usuarioService;
+  public AuthService(UserService userService) {
+    this.userService = userService;
   }
 
-  public UserLoginResponse login(String usuario, String senha) {
-    Optional<Usuario> usuarioOpt = usuarioService.buscarPorNome(usuario);
+  public UserLoginResponse login(String user, String password) {
+    Optional<User> usuarioOpt = userService.findByName(user);
 
     if (!usuarioOpt.isPresent()) {
       System.out.println("User doesn't exists.");
       return new UserLoginResponse(StatusTable.UNAUTHORIZED, null);
     }
 
-    Usuario userOpt = usuarioOpt.get();
-    if (!userOpt.getSenha().equals(senha)) {
+    User userOpt = usuarioOpt.get();
+    if (!userOpt.getPassword().equals(password)) {
       System.out.println("Incorrect password.");
       return new UserLoginResponse(StatusTable.UNAUTHORIZED, null);
     }
 
-    String token = JwtUtil.gerarToken(
+    String token = JwtUtil.generateToken(
         userOpt.getId(),
-        userOpt.getNome(),
+        userOpt.getName(),
         userOpt.isAdmin() ? "admin" : "usuario");
     System.out.println("Login successful. Token: " + token);
-    ServerView.addUser(userOpt.getNome());
+    ServerView.addUser(userOpt.getName());
     return new UserLoginResponse(StatusTable.OK, token);
   }
 
-  public StatusResponse logout(DecodedJWT validarToken) {
-    String user = validarToken.getClaim("usuario").toString();
+  public StatusResponse logout(DecodedJWT decodedJwt) {
+    String user = decodedJwt.getClaim("usuario").asString();
     System.out.println("Usuário " + user + " desconectando...");
     ServerView.removeUser(user);
     return new StatusResponse(StatusTable.OK);
