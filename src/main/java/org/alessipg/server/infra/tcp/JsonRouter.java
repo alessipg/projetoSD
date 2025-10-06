@@ -10,10 +10,10 @@ import lombok.Setter;
 
 import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.records.response.StatusResponse;
 import org.alessipg.server.app.controller.AuthController;
 import org.alessipg.server.app.controller.UserController;
 import org.alessipg.server.app.controller.MovieController;
-import org.alessipg.shared.records.StatusResponse;
 import org.alessipg.shared.util.IntegerAsStringAdapter;
 
 
@@ -63,6 +63,9 @@ public class JsonRouter {
                 // Read
                 case "LISTAR_PROPRIO_USUARIO":
                     return UserController.selfGet(json);
+                // Update
+                case "EDITAR_PROPRIO_USUARIO":
+                    return UserController.update(json);
                 default:
                     return null;
             }

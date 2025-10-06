@@ -5,9 +5,11 @@ import java.io.IOException;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.UserRegisterRequest;
-import org.alessipg.shared.records.UserSelfGetRequest;
-import org.alessipg.shared.records.UserSelfGetResponse;
+import org.alessipg.shared.records.request.UserRegisterRequest;
+import org.alessipg.shared.records.request.UserSelfGetRequest;
+import org.alessipg.shared.records.request.UserUpdateRequest;
+import org.alessipg.shared.records.response.UserSelfGetResponse;
+import org.alessipg.shared.records.util.UserRecord;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -62,5 +64,30 @@ public class UserClientService {
             return new UserSelfGetResponse(status,null);
         }
         return new UserSelfGetResponse("500",null);
+    }
+
+    public StatusTable update(String newPassword) throws IOException {
+        UserRecord user = new UserRecord(null,newPassword);
+        UserUpdateRequest msg = new UserUpdateRequest(user,SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            switch (status) {
+            case "200":
+                return StatusTable.OK;
+            case "400":
+                return StatusTable.BAD;
+            case "404":
+                return StatusTable.NOT_FOUND;
+            default:
+                return StatusTable.INTERNAL_SERVER_ERROR;
+            }
+        }
+        else {
+            return StatusTable.INTERNAL_SERVER_ERROR;
+        }
     }
 }

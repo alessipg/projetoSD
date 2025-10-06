@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.MovieCreateRequest;
+import org.alessipg.shared.records.request.MovieCreateRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

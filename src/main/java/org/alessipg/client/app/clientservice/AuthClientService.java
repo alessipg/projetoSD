@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.UserLoginRequest;
-import org.alessipg.shared.records.UserLogoutRequest;
+import org.alessipg.shared.records.request.UserLoginRequest;
+import org.alessipg.shared.records.request.UserLogoutRequest;
 
 import java.io.IOException;
 

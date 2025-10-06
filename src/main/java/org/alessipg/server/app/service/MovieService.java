@@ -7,8 +7,8 @@ import org.alessipg.server.infra.repo.MovieRepository;
 import org.alessipg.shared.domain.model.Movie;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.MovieRecord;
-import org.alessipg.shared.records.StatusResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.util.MovieRecord;
 
 public class MovieService {
     private final MovieRepository movieRepository;

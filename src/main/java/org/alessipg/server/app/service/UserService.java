@@ -2,8 +2,8 @@ package org.alessipg.server.app.service;
 
 import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.StatusResponse;
-import org.alessipg.shared.records.UserSelfGetResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.response.UserSelfGetResponse;
 import org.alessipg.server.infra.repo.UserRepository;
 import org.alessipg.server.util.JwtUtil;
 
@@ -43,10 +43,24 @@ public class UserService {
 
   public UserSelfGetResponse selfGet(String token) {
     String user = JwtUtil.validarToken(token)
-    .getClaim("usuario").asString();
-    if(user != null){
-      return new UserSelfGetResponse(StatusTable.OK,user);
+        .getClaim("usuario").asString();
+    if (user != null) {
+      return new UserSelfGetResponse(StatusTable.OK, user);
     }
     return new UserSelfGetResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+  }
+
+  public StatusResponse update(String token, String password) {
+    String name = JwtUtil.validarToken(token)
+        .getClaim("usuario").asString();
+    if (name != null) {
+      Optional<User> user = findByName(name);
+      if(!user.isPresent())
+        return new StatusResponse(StatusTable.NOT_FOUND);
+      user.get().setPassword(password);
+      persist(user.get());
+      return new StatusResponse(StatusTable.OK);
+    }
+    return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
   }
 }

@@ -3,8 +3,8 @@ package org.alessipg.server.app.controller;
 import java.util.List;
 
 import org.alessipg.server.app.service.MovieService;
-import org.alessipg.shared.records.MovieRecord;
-import org.alessipg.shared.records.StatusResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.util.MovieRecord;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
