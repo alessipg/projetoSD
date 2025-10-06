@@ -6,8 +6,8 @@ import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.StatusResponse;
-import org.alessipg.shared.records.UserLoginResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.response.UserLoginResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 

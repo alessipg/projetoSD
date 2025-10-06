@@ -1,6 +1,8 @@
-package org.alessipg.shared.records;
+package org.alessipg.shared.records.request;
 
 import java.util.List;
+
+import org.alessipg.shared.records.util.MovieRecord;
 
 
 

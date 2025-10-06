@@ -1,4 +1,4 @@
-package org.alessipg.shared.records;
+package org.alessipg.shared.records.response;
 
 import org.alessipg.shared.enums.StatusTable;
 

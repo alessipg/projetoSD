@@ -2,8 +2,9 @@ package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.util.JwtUtil;
-import org.alessipg.shared.records.StatusResponse;
-import org.alessipg.shared.records.UserLoginResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.response.UserLoginResponse;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 

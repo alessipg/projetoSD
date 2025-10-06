@@ -8,7 +8,7 @@ import java.util.Map;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.MovieCreateRequest;
+import org.alessipg.shared.records.request.MovieCreateRequest;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

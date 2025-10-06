@@ -1,4 +1,4 @@
-package org.alessipg.shared.records;
+package org.alessipg.shared.records.request;
 
 public record UserSelfGetRequest(String operacao, String token) {
     public UserSelfGetRequest(String token){

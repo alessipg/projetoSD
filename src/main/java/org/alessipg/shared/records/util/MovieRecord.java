@@ -1,4 +1,4 @@
-package org.alessipg.shared.records;
+package org.alessipg.shared.records.util;
 
 import java.util.List;
 
