@@ -52,5 +52,6 @@ public class FilmesViewController {
     @FXML
     private void onLogout() throws IOException {
         SessionManager.getInstance().getAuthClientService().logout();
+        listFilmes.getScene().getWindow().hide();
     }
 }       

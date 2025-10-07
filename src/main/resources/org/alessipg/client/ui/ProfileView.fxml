@@ -38,7 +38,7 @@
                         <Insets />
                     </GridPane.margin>
                <children>
-                  <Button fx:id="btnVoltar" mnemonicParsing="false" text="Voltar" />
+                  <Button fx:id="btnVoltar" mnemonicParsing="false" prefWidth="100.0" text="Voltar" />
                </children>
                 </VBox>
             <Label fx:id="lblUser" alignment="CENTER" contentDisplay="CENTER" text="Olá, Usuário" textAlignment="CENTER" textFill="WHITE">
@@ -47,13 +47,19 @@
                </font></Label>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
                <children>
-                  <Label text="Alterar Senha">
+                  <Label text="Preferências da conta" textFill="#bcbcbc">
+                     <font>
+                        <Font name="Nirmala Text Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label text="Alterar Senha" textFill="WHITE">
                      <font>
                         <Font name="Nirmala Text Bold" size="18.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="pfPassword" promptText="Nova Senha" />
-                  <Button fx:id="btnPassword" mnemonicParsing="false" onAction="#onChangePassword" text="Alterar" />
+                  <PasswordField fx:id="pfPassword" maxWidth="140.0" promptText="Nova Senha" />
+                  <Button fx:id="btnPassword" mnemonicParsing="false" onAction="#onChangePassword" prefWidth="100.0" text="Alterar" />
+                  <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#onDelete" prefWidth="100.0" text="Excluir conta" />
                </children>
             </VBox>
             </children>

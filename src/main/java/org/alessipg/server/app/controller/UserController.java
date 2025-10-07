@@ -10,12 +10,13 @@ import com.google.gson.JsonObject;
 public class UserController {
   private final UserService userService;
   private final Gson gson;
-  
+
   public UserController(UserService usuarioService, Gson gson) {
     this.userService = usuarioService;
     this.gson = gson;
   }
-//TODO: implement throws for inexistent values
+
+  // TODO: implement throws for inexistent values
   public String create(JsonObject json) {
     JsonObject usuario = json.get("usuario").getAsJsonObject();
     String nome = usuario.get("nome").getAsString();
@@ -32,15 +33,17 @@ public class UserController {
   }
 
   public String update(JsonObject json) {
-    System.out.println("1");
     JsonObject usuario = json.get("usuario").getAsJsonObject();
-    System.out.println("2");
     String password = usuario.get("senha").getAsString();
-    System.out.println("3");
     String token = json.get("token").getAsString();
-    System.out.println("4");
     StatusResponse status = userService.update(token, password);
-    System.out.println("5");
-    return gson.toJson(status);}
+    return gson.toJson(status);
+  }
+
+  public String selfDelete(JsonObject json) {
+    String token = json.get("token").getAsString();
+    StatusResponse status = userService.selfDelete(token);
+    return gson.toJson(status);
+  }
 
 }

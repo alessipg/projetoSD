@@ -5,6 +5,7 @@ import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.response.StatusResponse;
 import org.alessipg.shared.records.response.UserSelfGetResponse;
 import org.alessipg.server.infra.repo.UserRepository;
+import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 
 import java.util.Optional;
@@ -14,6 +15,7 @@ public class UserService {
 
   public UserService(UserRepository usuarioRepository) {
     this.userRepository = usuarioRepository;
+
   }
 
   public StatusResponse create(String name, String password) {
@@ -63,4 +65,20 @@ public class UserService {
     }
     return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
   }
+  // TODO: exceptions
+  public StatusResponse selfDelete(String token) {
+        String name = JwtUtil.validarToken(token)
+        .getClaim("usuario").asString();
+    if (name != null) {
+      Optional<User> optUser = findByName(name);
+      if(!optUser.isPresent())
+        return new StatusResponse(StatusTable.NOT_FOUND);
+      User user = optUser.get();
+      userRepository.delete(user);
+      ServerView.removeUser(user.getName());
+      return new StatusResponse(StatusTable.OK);
+    }
+    return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+  }
 }
+

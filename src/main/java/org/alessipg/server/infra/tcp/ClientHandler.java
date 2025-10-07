@@ -55,8 +55,11 @@ public class ClientHandler implements Runnable {
 
     private boolean isLogout(String json) {
         try {
-            com.google.gson.JsonObject obj = com.google.gson.JsonParser.parseString(json).getAsJsonObject();
-            String op = obj.has("operacao") ? obj.get("operacao").getAsString() : "";
+            com.google.gson.JsonObject obj = 
+            com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+            String op = obj.has("operacao") ? 
+            obj.get("operacao").getAsString() 
+            : "";
             return "LOGOUT".equalsIgnoreCase(op);
         } catch (Exception e) {
             return false;
