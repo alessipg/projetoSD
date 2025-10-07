@@ -10,33 +10,26 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.alessipg.shared.domain.model.Filme;
+import org.alessipg.shared.domain.model.Movie;
 
 public class AdminViewController {
 
     @FXML
-    private ListView<Filme> listFilmes;
+    private ListView<Movie> listFilmes;
 
     @FXML
     public void initialize() {
         // Custom cell factory
-        listFilmes.setCellFactory(new Callback<ListView<Filme>, ListCell<Filme>>() {
+        listFilmes.setCellFactory(new Callback<ListView<Movie>, ListCell<Movie>>() {
             @Override
-            public ListCell<Filme> call(ListView<Filme> param) {
+            public ListCell<Movie> call(ListView<Movie> param) {
                 return new FilmeListCell();
             }
         });
 
         // Exemplo de dados mockados
         listFilmes.getItems().addAll(
-            new Filme("O Poderoso Chefão", "Francis Ford Coppola", 1972,
-                    Arrays.asList("DRAMA", "ACAO"), "A saga da família Corleone...", 2000,
-                    4.8f),
-            new Filme("Interestelar", "Christopher Nolan", 2014,
-                    Arrays.asList("FICCAO_CIENTIFICA", "AVENTURA"), "Um grupo de exploradores viaja através de um buraco de minhoca...", 5000,
-                    4.5f)
         );
     }
         @FXML

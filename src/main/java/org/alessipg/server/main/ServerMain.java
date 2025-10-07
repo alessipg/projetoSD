@@ -1,18 +1,18 @@
 package org.alessipg.server.main;
 
 import javax.swing.*;
-import org.alessipg.server.infra.config.ApplicationContainer;
+import org.alessipg.server.infra.config.ServerContainer;
 
 import static org.alessipg.server.ui.ServerView.createAndShowGUI;
 
 public class ServerMain {
 
     public static void main(String[] args) {
-        ApplicationContainer container = null;
+        ServerContainer container = null;
         
         try {
             System.out.println("Antes de inicializar ApplicationContainer");
-            container = new ApplicationContainer();
+            container = new ServerContainer();
             System.out.println("ApplicationContainer inicializado");
 
             // Criar interface gráfica
@@ -24,7 +24,7 @@ public class ServerMain {
             });
             
             // Adicionar shutdown hook para garantir fechamento correto do banco
-            final ApplicationContainer finalContainer = container;
+            final ServerContainer finalContainer = container;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 System.out.println("Iniciando shutdown do servidor...");
                 try {

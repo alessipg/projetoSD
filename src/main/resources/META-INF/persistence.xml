@@ -6,9 +6,8 @@
              version="2.1">
 
     <persistence-unit name="projeto-sd" transaction-type="RESOURCE_LOCAL">
-        <class>org.alessipg.shared.domain.model.Usuario</class>
-        <class>org.alessipg.shared.domain.model.Filme</class>
-        <class>org.alessipg.shared.domain.model.Genero</class>
+        <class>org.alessipg.shared.domain.model.User</class>
+        <class>org.alessipg.shared.domain.model.Movie</class>
         <class>org.alessipg.shared.domain.model.Review</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url"

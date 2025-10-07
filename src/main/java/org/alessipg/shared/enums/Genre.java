@@ -1,6 +1,6 @@
 package org.alessipg.shared.enums;
 
-public enum Genero {
+public enum Genre {
     ACAO("Ação"),
     ANIMACAO("Animação"),
     AVENTURA("Aventura"),
@@ -15,7 +15,7 @@ public enum Genero {
 
     private final String displayName;
 
-    Genero(String displayName) {
+    Genre(String displayName) {
         this.displayName = displayName;
     }
 
@@ -24,7 +24,11 @@ public enum Genero {
         return displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public static Genre from(String s) {
+        for (Genre g : values()) {
+            if (g.displayName.equals(s))
+                return g;
+        }
+        throw new IllegalArgumentException(String.valueOf(s));
     }
 }

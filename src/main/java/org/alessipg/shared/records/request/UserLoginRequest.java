@@ -1,4 +1,4 @@
-package org.alessipg.shared.records;
+package org.alessipg.shared.records.request;
 
 public record UserLoginRequest(String operacao, String usuario, String senha) {
 

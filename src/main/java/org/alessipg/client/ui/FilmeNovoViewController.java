@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alessipg.client.app.clientservice.FilmeClientService;
 import org.alessipg.client.infra.session.SessionManager;
-import org.alessipg.shared.enums.Genero;
+import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.MovieCreateRequest;
-import org.hibernate.internal.SessionOwnerBehavior;
+import org.alessipg.shared.records.request.MovieCreateRequest;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -25,7 +23,7 @@ import javafx.scene.Scene;
 import javafx.util.converter.IntegerStringConverter;
 
 public class FilmeNovoViewController {
-    private Map<Genero, CheckBox> checkBoxGeneroMap = new HashMap<>();
+    private Map<Genre, CheckBox> checkBoxGeneroMap = new HashMap<>();
 
     @FXML
     private GridPane gridGenero;
@@ -48,8 +46,8 @@ public class FilmeNovoViewController {
         for (Node node : gridGenero.getChildren()) {
             if (node instanceof CheckBox checkBox) {
                 // Use o método getDisplayName para comparar
-                for (Genero genero : Genero.values()) {
-                    if (genero.getDisplayName().equals(checkBox.getText())) {
+                for (Genre genero : Genre.values()) {
+                    if (genero.toString().equals(checkBox.getText())) {
                         checkBoxGeneroMap.put(genero, checkBox);
                         break;
                     }
@@ -118,7 +116,7 @@ public class FilmeNovoViewController {
     public List<String> getGenerosSelecionados() {
         return checkBoxGeneroMap.entrySet().stream()
                 .filter(entry -> entry.getValue().isSelected())
-                .map(entry -> entry.getKey().getDisplayName())
+                .map(entry -> entry.getKey().toString())
                 .toList();
     }
 
@@ -137,7 +135,7 @@ public class FilmeNovoViewController {
                 SessionManager.getInstance().getToken()
             );
             StatusTable res = SessionManager.getInstance()
-                    .getFilmeClientService().criar(movie);
+                    .getMovieClientService().criar(movie);
 
             // Fecha a janela atual
             Stage stage = (Stage) tfTitulo.getScene().getWindow();

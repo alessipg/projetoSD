@@ -1,27 +1,45 @@
 package org.alessipg.client.infra.session;
 
 import org.alessipg.client.app.clientservice.AuthClientService;
-import org.alessipg.client.app.clientservice.FilmeClientService;
+import org.alessipg.client.app.clientservice.MovieClientService;
+import org.alessipg.client.app.clientservice.UserClientService;
+import org.alessipg.client.infra.tcp.TcpClient;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class SessionManager {
-    private static SessionManager instance;
+public final class SessionManager {
+    private static volatile SessionManager instance;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String token;
-
     @Getter
-    private final AuthClientService authClientService = new AuthClientService();
+    @Setter
+    public static TcpClient client;
     @Getter
-    private final FilmeClientService filmeClientService = new FilmeClientService();
-    
-    private SessionManager() {}
+    private final AuthClientService authClientService;
+    @Getter
+    private final MovieClientService movieClientService;
+    @Getter
+    private final UserClientService userClientService;
 
-    public static synchronized SessionManager getInstance() {
-        if(instance == null)
-            instance = new SessionManager();
+    private SessionManager(AuthClientService auth, MovieClientService movie,
+    UserClientService user) {
+        this.authClientService = auth;
+        this.movieClientService = movie;
+        this.userClientService = user;
+    }
+
+    public static synchronized void init(AuthClientService auth, MovieClientService movie, UserClientService user) {
+        if (instance != null)
+            throw new IllegalStateException("SessionManager já inicializado");
+        instance = new SessionManager(auth, movie,user);
+    }
+
+    public static SessionManager getInstance() {
+        if (instance == null)
+            throw new IllegalStateException("Chame SessionManager.init(...) antes");
         return instance;
     }
 }

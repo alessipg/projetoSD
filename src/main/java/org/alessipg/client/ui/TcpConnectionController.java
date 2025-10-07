@@ -9,12 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
+
+import org.alessipg.client.infra.config.ClientContainer;
+import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
-import org.alessipg.client.infra.tcp.TcpClientHolder;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 
 public class TcpConnectionController {
 
@@ -86,11 +86,11 @@ public class TcpConnectionController {
 
             @Override
             protected Void call() {
-                final int TIMEOUT_MS = 3000;
-                try (Socket socket = new Socket()) {
-                    InetSocketAddress endpoint = new InetSocketAddress(host, port);
-                    socket.connect(endpoint, TIMEOUT_MS);
+                try {
+                    TcpClient client = new TcpClient(host, port);
+                    client.connect();
                     success = true;
+                    SessionManager.setClient(client);
                     message = "Conectado com sucesso a " + host + ":" + port;
                 } catch (IOException ex) {
                     success = false;
@@ -101,7 +101,7 @@ public class TcpConnectionController {
 
             @Override
             protected void succeeded() {
-                finishConnection(success, message, host, port);
+                finish(success, message, host, port);
             }
 
             @Override
@@ -115,14 +115,14 @@ public class TcpConnectionController {
 
             @Override
             protected void failed() {
-                finishConnection(false, "Erro inesperado.", host, port);
+                finish(false, "Erro inesperado.", host, port);
             }
         };
 
         new Thread(connectionTask).start();
     }
 
-    private void finishConnection(boolean success, String message, String host, int port) {
+    private void finish(boolean success, String message, String host, int port) {
         Platform.runLater(() -> {
             connectButton.setDisable(false);
             cancelButton.setDisable(true);
@@ -131,12 +131,9 @@ public class TcpConnectionController {
             if (success) {
                 statusLabel.setTextFill(Color.GREEN);
                 statusLabel.setText(message);
-                try {
-                    // Criar e configurar o cliente TCP
-                    TcpClient client = new TcpClient(host, port);
-                    client.connect();
-                    TcpClientHolder.set(client);
-                    
+                try {                 
+                    // Initialize
+                    ClientContainer.initialize();
                     // Navegar para a tela de login
                     FXMLLoader loader = new FXMLLoader(
                             getClass().getResource("/org/alessipg/client/ui/LoginView.fxml"));

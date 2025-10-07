@@ -8,7 +8,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 public class JwtUtil {
     private static final String SECRET = "supersecretkey";
 
-    public static String gerarToken(int id, String usuario, String funcao) {
+    public static String generateToken(int id, String usuario, String funcao) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET);
         return JWT.create()
             .withClaim("id", id)

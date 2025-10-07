@@ -2,22 +2,19 @@ package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.util.JwtUtil;
-import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.StatusResponse;
-import org.alessipg.shared.records.UserLoginResponse;
+import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.records.response.UserLoginResponse;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 public class AuthController {
     private final AuthService authService;
     private final Gson gson;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, Gson gson) {
         this.authService = authService;
-        this.gson = new GsonBuilder().create();
+        this.gson = gson;
     }
 
     public String login(JsonObject json) {

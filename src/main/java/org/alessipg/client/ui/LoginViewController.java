@@ -30,7 +30,7 @@ public class LoginViewController {
         String senha = txtSenha.getText();
         try {
             StatusTable res = SessionManager.getInstance()
-                .getAuthClientService().login(usuario, senha);
+                    .getAuthClientService().login(usuario, senha);
             switch (res) {
                 case StatusTable.OK:
                     FXMLLoader loader = new FXMLLoader(
@@ -51,6 +51,62 @@ public class LoginViewController {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Erro interno");
                     alert.setContentText("Erro no servidor!");
+                    alert.showAndWait();
+                    break;
+                }
+                default:
+                    break;
+
+            }
+        } catch (IOException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setResizable(true);
+            alert.setTitle("Erro de conexão");
+            alert.setContentText("Erro ao conectar com o servidor: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    private void onCreate(ActionEvent event) {
+        String usuario = txtUsuario.getText();
+        String senha = txtSenha.getText();
+        try {
+            StatusTable res = SessionManager.getInstance()
+                    .getUserClientService().create(usuario, senha);
+            switch (res) {
+                case StatusTable.OK: {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Sucesso");
+                    alert.setContentText("Usuário criado com sucesso!");
+                    alert.showAndWait();
+                    break;
+                }
+                case StatusTable.BAD: {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Algo deu errado");
+                    alert.setContentText("Verifique as informações e tente novamente");
+                    alert.showAndWait();
+                    break;
+                }
+                case StatusTable.ALREADY_EXISTS: {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Inválido");
+                    alert.setContentText("Usuário já cadastrado!");
+                    alert.showAndWait();
+                    break;
+                }
+                case StatusTable.INTERNAL_SERVER_ERROR: {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Erro interno");
+                    alert.setContentText("Erro no servidor!");
+                    alert.showAndWait();
+                    break;
+                }
+                case StatusTable.UNPROCESSABLE_ENTITY: {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Inválido");
+                    alert.setContentText("Dados faltantes ou fora do padrão");
                     alert.showAndWait();
                     break;
                 }
