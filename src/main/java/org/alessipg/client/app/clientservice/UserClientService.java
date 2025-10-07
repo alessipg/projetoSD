@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.records.request.UserDeleteRequest;
 import org.alessipg.shared.records.request.UserRegisterRequest;
 import org.alessipg.shared.records.request.UserSelfGetRequest;
 import org.alessipg.shared.records.request.UserUpdateRequest;
@@ -69,6 +70,30 @@ public class UserClientService {
     public StatusTable update(String newPassword) throws IOException {
         UserRecord user = new UserRecord(null,newPassword);
         UserUpdateRequest msg = new UserUpdateRequest(user,SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            switch (status) {
+            case "200":
+                return StatusTable.OK;
+            case "400":
+                return StatusTable.BAD;
+            case "404":
+                return StatusTable.NOT_FOUND;
+            default:
+                return StatusTable.INTERNAL_SERVER_ERROR;
+            }
+        }
+        else {
+            return StatusTable.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public StatusTable delete() throws IOException {
+        UserDeleteRequest msg = new UserDeleteRequest(SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();

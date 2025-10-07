@@ -10,21 +10,21 @@ import java.util.Optional;
 
 public class UserRepository {
 
-    public User save(User usuario) {
-    EntityManager em = Jpa.getEntityManager();
+    public User save(User user) {
+        EntityManager em = Jpa.getEntityManager();
         try {
             em.getTransaction().begin();
-            
-            if (usuario.getId() == 0) {
+
+            if (user.getId() == 0) {
                 // Novo usuário
-                em.persist(usuario);
+                em.persist(user);
             } else {
                 // Atualizar usuário existente
-                usuario = em.merge(usuario);
+                user = em.merge(user);
             }
-            
+
             em.getTransaction().commit();
-            return usuario;
+            return user;
         } catch (Exception e) {
             em.getTransaction().rollback();
             throw new RuntimeException("Erro ao salvar usuário", e);
@@ -33,19 +33,35 @@ public class UserRepository {
         }
     }
 
-    public Optional<User> findByNome(String nome) {
-    EntityManager em = Jpa.getEntityManager();
+    public Optional<User> findByNome(String name) {
+        EntityManager em = Jpa.getEntityManager();
         try {
             TypedQuery<User> query = em.createQuery(
-                "SELECT u FROM User u WHERE u.name = :name", User.class);
-            query.setParameter("name", nome);
-            
+                    "SELECT u FROM User u WHERE u.name = :name", User.class);
+            query.setParameter("name", name);
+
             User usuario = query.getSingleResult();
             return Optional.of(usuario);
         } catch (NoResultException e) {
             return Optional.empty();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar usuário por nome", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete(User u) {
+        EntityManager em = Jpa.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            User user = em.contains(u) ? u : em.getReference(User.class, u.getId());
+            em.remove(user);
+            em.getTransaction().commit();
+            return;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Erro ao apagar usuário", e);
         } finally {
             em.close();
         }

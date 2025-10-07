@@ -8,7 +8,6 @@ import com.google.gson.JsonSyntaxException;
 
 import lombok.Setter;
 
-import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.response.StatusResponse;
 import org.alessipg.server.app.controller.AuthController;
@@ -66,6 +65,9 @@ public class JsonRouter {
                 // Update
                 case "EDITAR_PROPRIO_USUARIO":
                     return UserController.update(json);
+                // Delete
+                case "EXCLUIR_PROPRIO_USUARIO":
+                    return UserController.selfDelete(json);
                 default:
                     return null;
             }
