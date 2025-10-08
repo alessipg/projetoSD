@@ -1,5 +1,7 @@
 package org.alessipg.shared.enums;
 
+import lombok.Getter;
+
 public enum Genre {
     ACAO("Ação"),
     ANIMACAO("Animação"),
@@ -13,6 +15,7 @@ public enum Genre {
     ROMANCE("Romance"),
     TERROR("Terror");
 
+    @Getter
     private final String displayName;
 
     Genre(String displayName) {

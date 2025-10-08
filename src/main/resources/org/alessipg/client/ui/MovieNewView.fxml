@@ -5,7 +5,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.SpinnerValueFactory?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.FilmeNovoViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.MovieNewViewController">
    <top>
       <Label text="Novo filme" textAlignment="CENTER" BorderPane.alignment="CENTER">
          <font>
@@ -40,17 +41,17 @@
     </rowConstraints>
     <children>
         <Label text="Título:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="tfTitulo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <TextField fx:id="tfTitle" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label text="Ano:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Spinner fx:id="spAno" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Spinner fx:id="spYear" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
             <valueFactory>
-               <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory min="1800" max="2025" initialValue="2020"/>
+               <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="2020" max="2025" min="1800" />
             </valueFactory>
         </Spinner>
         <Label text="Diretor:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <TextField fx:id="tfDiretor" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="tfDirector" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         <Label text="Gênero:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <GridPane fx:id="gridGenero" hgap="10" vgap="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <GridPane fx:id="gridGenre" hgap="10" vgap="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
     <columnConstraints>
         <ColumnConstraints />
         <ColumnConstraints />
@@ -78,7 +79,7 @@
     </children>
 </GridPane>
         <Label text="Sinopse:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <TextField fx:id="tfSinopse" prefHeight="75.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextArea fx:id="taSynopsis" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     </children>
 </GridPane>
    </center>

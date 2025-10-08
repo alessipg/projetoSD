@@ -34,11 +34,15 @@ public class LoginViewController {
             switch (res) {
                 case StatusTable.OK:
                     FXMLLoader loader = new FXMLLoader(
-                            getClass().getResource("/org/alessipg/client/ui/FilmesView.fxml"));
+                            getClass().getResource("/org/alessipg/client/ui/MoviesView.fxml"));
                     Parent novaTelaRoot = loader.load();
                     Stage stage = (Stage) txtUsuario.getScene().getWindow();
                     stage.setTitle("Filmes");
-                    stage.setScene(new Scene(novaTelaRoot));
+                    Scene scene = new Scene(novaTelaRoot);
+                    stage.setScene(scene);
+                    stage.sizeToScene();
+                    javafx.application.Platform.runLater(stage::centerOnScreen);
+
                     break;
                 case StatusTable.UNAUTHORIZED: {
                     Alert alert = new Alert(AlertType.ERROR);

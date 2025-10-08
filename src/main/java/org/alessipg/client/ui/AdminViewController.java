@@ -11,32 +11,45 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 
-import org.alessipg.shared.domain.model.Movie;
+import org.alessipg.client.infra.session.SessionManager;
+import org.alessipg.shared.records.response.MovieGetAllResponse;
+import org.alessipg.shared.records.util.MovieRecord;
 
 public class AdminViewController {
 
     @FXML
-    private ListView<Movie> listFilmes;
+    private ListView<MovieRecord> listMovies;
 
     @FXML
     public void initialize() {
         // Custom cell factory
-        listFilmes.setCellFactory(new Callback<ListView<Movie>, ListCell<Movie>>() {
+        listMovies.setCellFactory(new Callback<ListView<MovieRecord>, ListCell<MovieRecord>>() {
             @Override
-            public ListCell<Movie> call(ListView<Movie> param) {
+            public ListCell<MovieRecord> call(ListView<MovieRecord> param) {
                 return new FilmeListCell();
             }
         });
 
-        // Exemplo de dados mockados
-        listFilmes.getItems().addAll(
-        );
+        try {
+            MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
+            listMovies.getItems().addAll(movies.filmes());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
         @FXML
-    private void onNovo() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/FilmeNovoView.fxml"));
+    private void onNew() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieNewView.fxml"));
         Parent novaTelaRoot = loader.load();
-        Stage stage = (Stage) listFilmes.getScene().getWindow();
+        Stage stage = (Stage) listMovies.getScene().getWindow();
+        stage.setScene(new Scene(novaTelaRoot));
+    }
+            @FXML
+    private void onBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MoviesView.fxml"));
+        Parent novaTelaRoot = loader.load();
+        Stage stage = (Stage) listMovies.getScene().getWindow();
         stage.setScene(new Scene(novaTelaRoot));
     }
 }

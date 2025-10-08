@@ -11,10 +11,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600" prefWidth="800" style="-fx-background-color: #272727;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.FilmesViewController">
+<BorderPane prefHeight="600" prefWidth="800" style="-fx-background-color: #272727;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.MoviesViewController">
 
     <center>
-        <ListView fx:id="listFilmes" />
+        <ListView fx:id="listMovies" />
     </center>
     <left>
         <GridPane prefHeight="226.0" prefWidth="168.0" BorderPane.alignment="CENTER">

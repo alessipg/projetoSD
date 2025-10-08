@@ -3,8 +3,9 @@ package org.alessipg.server.app.controller;
 import java.util.List;
 
 import org.alessipg.server.app.service.MovieService;
+import org.alessipg.shared.records.response.MovieGetAllResponse;
 import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.records.util.MovieCreateDto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,8 +32,13 @@ public class MovieController {
             genres.add(genresArray.get(i).getAsString());
         }
         String synopsis = movie.get("sinopse").getAsString();
-        StatusResponse status = movieService.create(new MovieRecord(title, director, year, genres, synopsis));
+        StatusResponse status = movieService.create(new MovieCreateDto(title, director, year, genres, synopsis));
         return gson.toJson(status);
+    }
+
+    public String getAll() {
+        MovieGetAllResponse movies = movieService.getAll();
+        return gson.toJson(movies);
     }
 
 }

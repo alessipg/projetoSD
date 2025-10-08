@@ -37,7 +37,6 @@ public class AuthService {
         userOpt.getId(),
         userOpt.getName(),
         userOpt.isAdmin() ? "admin" : "usuario");
-    System.out.println("Login successful. Token: " + token);
     ServerView.addUser(userOpt.getName());
     return new UserLoginResponse(StatusTable.OK, token);
   }
