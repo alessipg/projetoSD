@@ -20,14 +20,11 @@ public class AuthController {
     public String login(JsonObject json) {
         String usuario = json.get("usuario").getAsString();
         String senha = json.get("senha").getAsString();
-        System.out.println("Login attempt for user: " + usuario);
-
         UserLoginResponse status = authService.login(usuario, senha);
-        System.out.println(status);
-        System.out.println(gson.toJson(status));
         return gson.toJson(status);
     }
 
+    // TODO: a way to remove user when the client is closed
     public String logout(JsonObject json) {
         String token = json.get("token").getAsString();
         

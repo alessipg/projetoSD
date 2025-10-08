@@ -1,6 +1,6 @@
 package org.alessipg.client.ui;
 
-import org.alessipg.shared.domain.model.Movie;
+import org.alessipg.shared.records.util.MovieRecord;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public class FilmeListCell extends ListCell<Movie> {
+public class FilmeListCell extends ListCell<MovieRecord> {
     private VBox vbox = new VBox(5);
     private Label lblTitulo = new Label();
     private Label lblInfo = new Label();
@@ -25,17 +25,17 @@ public class FilmeListCell extends ListCell<Movie> {
     }
 
     @Override
-    protected void updateItem(Movie filme, boolean empty) {
+    protected void updateItem(MovieRecord filme, boolean empty) {
         super.updateItem(filme, empty);
 
         if (empty || filme == null) {
             setText(null);
             setGraphic(null);
         } else {
-            lblTitulo.setText(filme.getTitle() + " (" + filme.getYear() + ")");
-            lblInfo.setText("Diretor: " + filme.getDirector() + " | Gêneros: " +
-                String.join(", ", filme.getGenres().stream().map(Object::toString).toList()));
-            lblNota.setText("Nota: " + filme.getScore() + " (" + filme.getRatingCount() + " avaliações)");
+            lblTitulo.setText(filme.titulo() + " (" + filme.ano() + ")");
+            lblInfo.setText("Diretor: " + filme.diretor() + " | Gêneros: " +
+                String.join(", ", filme.genero().stream().map(Object::toString).toList()));
+            lblNota.setText("Nota: " + filme.nota() + " (" + filme.qtd_avaliacoes() + " avaliações)");
             setGraphic(vbox);
         }
     }

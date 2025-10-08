@@ -1,45 +1,5 @@
-# VoteFlix - Como Executar
+# VoteFlix
 
-## 🚀 Comandos Maven
+This project was proposed in the Distributed Systems course at the Federal University of Technology – Paraná (UTFPR). It is a client-server application that allows users to submit and view movie reviews. Communication between client and server uses the TCP protocol. You can check the project rules here: (Work in progress 🔧)
 
-### **Cliente JavaFX (Padrão)**
-```bash
-mvn clean compile exec:java
-```
-ou
-```bash
-mvn clean compile javafx:run
-```
-
-### **Servidor Swing**
-```bash
-mvn clean compile exec:java -Dexec.mainClass="org.alessipg.server.main.ServerMain"
-```
-
-### **Gerenciador de Usuários**
-```bash
-mvn clean compile exec:java -Dexec.mainClass="org.alessipg.client.ui.UserManager"
-```
-
-## 📋 Aplicações
-
-| Comando | Aplicação | Tecnologia |
-|---------|-----------|------------|
-| `exec:java` | Cliente | JavaFX |
-| `javafx:run` | Cliente | JavaFX |
-| `-Dexec.mainClass="...ServerMain"` | Servidor | Swing |
-| `-Dexec.mainClass="...UserManager"` | UserManager | Swing |
-
-## 🔄 Fluxo Recomendado
-
-1. **Servidor primeiro:**
-   ```bash
-   mvn clean compile exec:java -Dexec.mainClass="org.alessipg.server.main.ServerMain"
-   ```
-
-2. **Cliente depois:**
-   ```bash
-   mvn clean compile exec:java
-   ```
-
-
+Instructions will be added when the project is finished. 🔧

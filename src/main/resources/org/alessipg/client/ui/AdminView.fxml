@@ -17,14 +17,15 @@
          <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
                <center>
-                  <ListView fx:id="listFilmes" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                  <ListView fx:id="listMovies" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
                </center>
                <left>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="btnNovo" mnemonicParsing="false" onAction="#onNovo" prefWidth="80.0" text="Novo" />
+                        <Button fx:id="btnNew" mnemonicParsing="false" onAction="#onNew" prefWidth="80.0" text="Novo" />
                         <Button mnemonicParsing="false" prefWidth="80.0" text="Editar" />
                         <Button mnemonicParsing="false" prefWidth="80.0" text="Excluir" />
+                        <Button fx:id="btnBack" maxWidth="80.0" mnemonicParsing="false" onAction="#onBack" text="Voltar" />
                      </children>
                   </VBox>
                </left>
