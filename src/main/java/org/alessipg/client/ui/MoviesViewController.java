@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
@@ -32,7 +33,15 @@ public class MoviesViewController {
 
         try {
             MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
-            listMovies.getItems().addAll(movies.filmes());
+            System.out.println("Status recebido: " + movies.status());
+            switch (movies.status()) {
+                case "200":
+                    listMovies.getItems().addAll(movies.filmes());
+                    break;
+                default:
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status());
+                    alert.showAndWait();
+            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

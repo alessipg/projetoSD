@@ -8,6 +8,7 @@ import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.request.MovieCreateRequest;
+import org.alessipg.shared.records.request.MovieEditRequest;
 import org.alessipg.shared.records.request.MovieGetAllRequest;
 import org.alessipg.shared.records.response.MovieGetAllResponse;
 import org.alessipg.shared.records.util.MovieRecord;
@@ -69,13 +70,46 @@ public class MovieClientService {
                     }
                     return new MovieGetAllResponse(StatusTable.OK, movies);
                 case "400":
+                    return new MovieGetAllResponse(StatusTable.BAD, null);
                 case "401":
-                case "409":
+                    return new MovieGetAllResponse(StatusTable.UNAUTHORIZED, null);
                 case "422":
+                    return new MovieGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
                 case "404":
+                    return new MovieGetAllResponse(StatusTable.NOT_FOUND, null);
                 default:
-
+                    return new MovieGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
             }
+        }
+        return null;
+    }
+
+    public StatusTable edit(MovieRecord movie) {
+        MovieEditRequest msg = new MovieEditRequest(movie, SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        try {
+            client.send(json);
+            String response = client.receive();
+            if (response != null) {
+                JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+                String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+                switch (status) {
+                    case "200":
+                        return StatusTable.OK;
+                    case "400":
+                        return StatusTable.BAD;
+                    case "401":
+                        return StatusTable.UNAUTHORIZED;
+                    case "404":
+                        return StatusTable.NOT_FOUND;
+                    case "422":
+                        return StatusTable.UNPROCESSABLE_ENTITY;
+                    default:
+                        return StatusTable.INTERNAL_SERVER_ERROR;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
