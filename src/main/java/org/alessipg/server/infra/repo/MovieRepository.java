@@ -40,4 +40,13 @@ public class MovieRepository {
             em.close();
         }
     }
+
+    public Movie findById(String id) {
+        EntityManager em = Jpa.getEntityManager();
+        try {
+            return em.find(Movie.class, Long.parseLong(id));
+        } finally {
+            em.close();
+        }
+    }
 }

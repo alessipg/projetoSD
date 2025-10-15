@@ -20,15 +20,12 @@ public class MovieService {
     }
 
     public StatusResponse create(MovieCreateDto movieRecord) {
-        List<Genre> mappedGenres = new ArrayList<>();
-        for (String g : movieRecord.genero())
-            mappedGenres.add(Genre.from(g));
 
         Movie movie = new Movie(
                 movieRecord.titulo(),
                 movieRecord.diretor(),
                 Integer.parseInt(movieRecord.ano()),
-                mappedGenres,
+                mapGenres(movieRecord.genero()),
                 movieRecord.sinopse(),
                 0,
                 0.0f);
@@ -62,4 +59,27 @@ public class MovieService {
         return new MovieGetAllResponse("200", formmatedMovies);
     }
 
+    public StatusResponse update(MovieRecord m) {
+        Movie movie = movieRepository.findById(m.id());
+        if(movie == null)
+            return new StatusResponse(StatusTable.NOT_FOUND);
+        movie.setTitle(m.titulo());
+        movie.setDirector(m.diretor());
+        movie.setYear(Integer.parseInt(m.ano()));
+        movie.setGenres(mapGenres(m.genero()));
+        movie.setSynopsis(m.sinopse());
+        try {
+            persist(movie);
+            return new StatusResponse(StatusTable.OK);
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.BAD);
+        }
+    }
+
+    List<Genre> mapGenres(List<String> genres) {
+        List<Genre> mappedGenres = new ArrayList<>();
+        for (String g : genres)
+            mappedGenres.add(Genre.from(g));
+        return mappedGenres;
+    }
 }

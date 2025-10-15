@@ -10,6 +10,7 @@ import org.alessipg.shared.records.util.MovieCreateDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.alessipg.shared.records.util.MovieRecord;
 
 public class MovieController {
 
@@ -41,4 +42,10 @@ public class MovieController {
         return gson.toJson(movies);
     }
 
+    public String update(JsonObject json) {
+        MovieRecord movie = gson.fromJson(json.get("filme"), MovieRecord.class);
+        StatusResponse status = movieService.update(movie);
+        System.out.println(status.status());
+        return gson.toJson(status);
+    }
 }

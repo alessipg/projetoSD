@@ -65,6 +65,8 @@ public class JsonRouter {
                 // Update
                 case "EDITAR_PROPRIO_USUARIO":
                     return UserController.update(json);
+                case "EDITAR_FILME":
+                    return MovieController.update(json);
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);
