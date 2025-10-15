@@ -2,6 +2,7 @@ package org.alessipg.server.infra.tcp;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 import org.alessipg.shared.enums.StatusTable;
 
@@ -17,8 +18,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         try (
                 BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+                        new InputStreamReader(socket.getInputStream(), "UTF-8"));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true, Charset.forName("UTF-8"))) {
             String message;
             while ((message = in.readLine()) != null) {
                 System.out.println("Received from client: " + message);
@@ -38,7 +39,7 @@ public class ClientHandler implements Runnable {
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing message: " + e.getMessage());
-                    out.println("Error: " + e.getMessage());
+                    //out.println("Error: " + e.getMessage());
                 }
             }
 
