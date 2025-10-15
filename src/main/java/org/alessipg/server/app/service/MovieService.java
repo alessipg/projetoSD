@@ -60,7 +60,7 @@ public class MovieService {
     }
 
     public StatusResponse update(MovieRecord m) {
-        Movie movie = movieRepository.findById(m.id());
+        Movie movie = movieRepository.findById(Integer.parseInt(m.id()));
         if(movie == null)
             return new StatusResponse(StatusTable.NOT_FOUND);
         movie.setTitle(m.titulo());
@@ -81,5 +81,18 @@ public class MovieService {
         for (String g : genres)
             mappedGenres.add(Genre.from(g));
         return mappedGenres;
+    }
+
+    public StatusResponse delete(int id) {
+        Movie movie = movieRepository.findById(id);
+        if (movie == null) {
+            return new StatusResponse(StatusTable.NOT_FOUND);
+        }
+        try {
+            movieRepository.delete(movie);
+            return new StatusResponse(StatusTable.OK);
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.BAD);
+        }
     }
 }

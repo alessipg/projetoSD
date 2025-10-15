@@ -41,10 +41,29 @@ public class MovieRepository {
         }
     }
 
-    public Movie findById(String id) {
+    public Movie findById(int id) {
         EntityManager em = Jpa.getEntityManager();
         try {
-            return em.find(Movie.class, Long.parseLong(id));
+            return em.find(Movie.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete(Movie movie) {
+        EntityManager em = Jpa.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Movie toRemove = em.find(Movie.class, movie.getId());
+            if (toRemove != null) {
+                em.remove(toRemove);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erro ao deletar filme", e);
         } finally {
             em.close();
         }

@@ -16,7 +16,6 @@ import org.alessipg.server.app.controller.MovieController;
 import org.alessipg.shared.util.IntegerAsStringAdapter;
 
 
-
 public class JsonRouter {
     // Setter para injetar dependências
     @Setter
@@ -70,6 +69,8 @@ public class JsonRouter {
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);
+                case "EXCLUIR_FILME":
+                    return MovieController.delete(json);
                 default:
                     return null;
             }
