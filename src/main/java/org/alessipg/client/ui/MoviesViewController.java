@@ -33,7 +33,6 @@ public class MoviesViewController {
 
         try {
             MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
-            System.out.println("Status recebido: " + movies.status());
             switch (movies.status()) {
                 case "200":
                     listMovies.getItems().addAll(movies.filmes());

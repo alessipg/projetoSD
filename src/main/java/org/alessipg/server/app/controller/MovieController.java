@@ -48,4 +48,11 @@ public class MovieController {
         System.out.println(status.status());
         return gson.toJson(status);
     }
+
+    public String delete(JsonObject json) {
+        int id = json.get("id").getAsString().isEmpty() ? 0 : Integer.parseInt(json.get("id").getAsString());
+        StatusResponse status = movieService.delete(id);
+        return gson.toJson(status);
+        
+    }
 }

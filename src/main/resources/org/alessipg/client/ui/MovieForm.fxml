@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.MovieFormController">
+   <top>
+      <Label fx:id="formTitle" text="Novo filme" textAlignment="CENTER" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="43.0" />
+         </font>
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </Label>
+   </top>
+   <center>
+      <GridPane alignment="CENTER" hgap="10" vgap="10" BorderPane.alignment="CENTER">
+    <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" /> <!-- Título -->
+        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" /> <!-- Ano -->
+        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" /> <!-- Diretor -->
+        <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" /> <!-- Gêneros -->
+        <RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" /> <!-- Sinopse -->
+    </rowConstraints>
+    <children>
+        <Label text="Título:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="tfTitle" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label text="Ano:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Spinner fx:id="spYear" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <valueFactory>
+               <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="2020" max="2025" min="1800" />
+            </valueFactory>
+        </Spinner>
+        <Label text="Diretor:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="tfDirector" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Label text="Gênero:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <GridPane fx:id="gridGenre" hgap="10" vgap="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+    <columnConstraints>
+        <ColumnConstraints />
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
+    <children>
+        <CheckBox text="Ação" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <CheckBox text="Animação" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <CheckBox text="Aventura" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <CheckBox text="Comédia" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <CheckBox text="Documentário" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <CheckBox text="Drama" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <CheckBox text="Fantasia" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <CheckBox text="Ficção Científica" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <CheckBox text="Musical" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <CheckBox text="Romance" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <CheckBox text="Terror" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    </children>
+</GridPane>
+        <Label text="Sinopse:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextArea fx:id="taSynopsis" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    </children>
+</GridPane>
+   </center>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <bottom>
+      <HBox prefHeight="80.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane prefHeight="57.0" prefWidth="580.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancel" text="Cancelar" GridPane.halignment="CENTER" />
+                  <Button fx:id="btnSubmit" mnemonicParsing="false" onAction="#onSubmit" text="Cadastrar" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+               </children>
+            </GridPane>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

@@ -17,6 +17,9 @@ public class FilmeListCell extends ListCell<MovieRecord> {
     public FilmeListCell() {
         lblTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         lblInfo.setStyle("-fx-text-fill: gray;");
+        this.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+            lblInfo.setStyle(isNowSelected ? "-fx-text-fill: white;" : "-fx-text-fill: gray;");
+        });
         lblNota.setStyle("-fx-text-fill: #006600; -fx-font-weight: bold;");
 
         vbox.getChildren().addAll(lblTitulo, lblInfo, lblNota);
@@ -34,7 +37,7 @@ public class FilmeListCell extends ListCell<MovieRecord> {
         } else {
             lblTitulo.setText(filme.titulo() + " (" + filme.ano() + ")");
             lblInfo.setText("Diretor: " + filme.diretor() + " | Gêneros: " +
-                String.join(", ", filme.genero().stream().map(Object::toString).toList()));
+                    String.join(", ", filme.genero().stream().map(Object::toString).toList()));
             lblNota.setText("Nota: " + filme.nota() + " (" + filme.qtd_avaliacoes() + " avaliações)");
             setGraphic(vbox);
         }

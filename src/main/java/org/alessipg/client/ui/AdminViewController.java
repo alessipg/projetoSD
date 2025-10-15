@@ -18,6 +18,7 @@ import javafx.beans.value.ChangeListener;
 
 import lombok.Getter;
 import org.alessipg.client.infra.session.SessionManager;
+import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.response.MovieGetAllResponse;
 import org.alessipg.shared.records.util.MovieRecord;
 
@@ -70,6 +71,7 @@ public class AdminViewController {
         System.out.println("Selected movie: " + listMovies.getSelectionModel().getSelectedItem());
         stage.setScene(new Scene(novaTelaRoot));
     }
+    @FXML
     private void onDelete() {
         MovieRecord selectedMovie = listMovies.getSelectionModel().getSelectedItem();
         if (selectedMovie != null) {
@@ -79,7 +81,40 @@ public class AdminViewController {
             alert.showAndWait().ifPresent(response -> {
                 if (response == javafx.scene.control.ButtonType.OK) {
                     try {
-                        //SessionManager.getInstance().getMovieClientService().delete(selectedMovie.id());
+                        StatusTable res = SessionManager.getInstance().getMovieClientService().delete(selectedMovie.id());
+                        Alert a = new Alert(null);
+                        switch(res){
+                            case OK:
+                                a.setAlertType(Alert.AlertType.INFORMATION);
+                                a.setContentText("Filme excluído com sucesso!");
+                                a.showAndWait();
+                                break;
+                            case UNAUTHORIZED:
+                                a.setAlertType(Alert.AlertType.ERROR);
+                                a.setContentText("Erro: Usuário não autorizado.");
+                                a.showAndWait();
+                                break;
+                            case NOT_FOUND:
+                                a.setAlertType(Alert.AlertType.ERROR);
+                                a.setContentText("Erro: Filme não encontrado.");
+                                a.showAndWait();
+                                break;
+                            case UNPROCESSABLE_ENTITY:
+                                a.setAlertType(Alert.AlertType.ERROR);
+                                a.setContentText("Erro: Entidade não processável.");
+                                a.showAndWait();
+                                break;
+                            case INTERNAL_SERVER_ERROR:
+                                a.setAlertType(Alert.AlertType.ERROR);
+                                a.setContentText("Erro: Erro interno do servidor.");
+                                a.showAndWait();
+                                break;
+                            default:
+                                a.setAlertType(Alert.AlertType.ERROR);
+                                a.setContentText("Erro: Erro desconhecido.");
+                                a.showAndWait();
+                                break;
+                        }
                         loadMovies();
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
