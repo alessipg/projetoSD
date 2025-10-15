@@ -16,7 +16,6 @@ import org.alessipg.server.app.controller.MovieController;
 import org.alessipg.shared.util.IntegerAsStringAdapter;
 
 
-
 public class JsonRouter {
     // Setter para injetar dependências
     @Setter
@@ -45,8 +44,6 @@ public class JsonRouter {
                 return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
             }
             String operation = json.get("operacao").getAsString();
-            System.out.println("Operation: " + operation);
-            System.out.println("Full JSON: " + json);
             // Switch na operação
             switch (operation) {
                 // Auth
@@ -60,14 +57,20 @@ public class JsonRouter {
                 case "CRIAR_FILME":
                     return MovieController.create(json);
                 // Read
+                case "LISTAR_FILMES":
+                    return MovieController.getAll();
                 case "LISTAR_PROPRIO_USUARIO":
                     return UserController.selfGet(json);
                 // Update
                 case "EDITAR_PROPRIO_USUARIO":
                     return UserController.update(json);
+                case "EDITAR_FILME":
+                    return MovieController.update(json);
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);
+                case "EXCLUIR_FILME":
+                    return MovieController.delete(json);
                 default:
                     return null;
             }

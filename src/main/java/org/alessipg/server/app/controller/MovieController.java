@@ -3,12 +3,14 @@ package org.alessipg.server.app.controller;
 import java.util.List;
 
 import org.alessipg.server.app.service.MovieService;
+import org.alessipg.shared.records.response.MovieGetAllResponse;
 import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.records.util.MovieCreateDto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.alessipg.shared.records.util.MovieRecord;
 
 public class MovieController {
 
@@ -31,8 +33,26 @@ public class MovieController {
             genres.add(genresArray.get(i).getAsString());
         }
         String synopsis = movie.get("sinopse").getAsString();
-        StatusResponse status = movieService.create(new MovieRecord(title, director, year, genres, synopsis));
+        StatusResponse status = movieService.create(new MovieCreateDto(title, director, year, genres, synopsis));
         return gson.toJson(status);
     }
 
+    public String getAll() {
+        MovieGetAllResponse movies = movieService.getAll();
+        return gson.toJson(movies);
+    }
+
+    public String update(JsonObject json) {
+        MovieRecord movie = gson.fromJson(json.get("filme"), MovieRecord.class);
+        StatusResponse status = movieService.update(movie);
+        System.out.println(status.status());
+        return gson.toJson(status);
+    }
+
+    public String delete(JsonObject json) {
+        int id = json.get("id").getAsString().isEmpty() ? 0 : Integer.parseInt(json.get("id").getAsString());
+        StatusResponse status = movieService.delete(id);
+        return gson.toJson(status);
+        
+    }
 }

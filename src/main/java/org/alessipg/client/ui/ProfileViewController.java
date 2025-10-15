@@ -8,8 +8,12 @@ import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.records.response.UserSelfGetResponse;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -25,6 +29,8 @@ public class ProfileViewController {
     private Button btnPassword;
     @FXML
     private Button btnDelete;
+    @FXML
+    private Button btnBack;
 
     @FXML
     public void initialize() {
@@ -53,24 +59,24 @@ public class ProfileViewController {
             StatusTable res = SessionManager.getInstance().getUserClientService().update(pfPassword.getText());
             Alert alert = new Alert(null);
             switch (res) {
-                case OK: 
+                case OK:
                     alert.setAlertType(AlertType.INFORMATION);
                     alert.setTitle("Sucesso");
                     alert.setContentText("Senha alterada com sucesso!");
                     alert.showAndWait();
-                
-                case BAD: 
+
+                case BAD:
                     alert.setAlertType(AlertType.ERROR);
                     alert.setTitle("Falha");
                     alert.setContentText("Algo deu errado, tente novamente!");
                     alert.showAndWait();
-                
-                case FORBIDDEN: 
+
+                case FORBIDDEN:
                     alert.setAlertType(AlertType.ERROR);
                     alert.setTitle("Não enccontrado");
                     alert.setContentText("Usuário não encontrado. Faça um novo login e tente novamente!");
                     alert.showAndWait();
-                
+
                 default:
                     break;
             }
@@ -78,6 +84,14 @@ public class ProfileViewController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void onBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MoviesView.fxml"));
+        Parent novaTelaRoot = loader.load();
+        Stage stage = (Stage) btnBack.getScene().getWindow();
+        stage.setScene(new Scene(novaTelaRoot));
     }
 
     @FXML
@@ -91,28 +105,28 @@ public class ProfileViewController {
                 StatusTable res = SessionManager.getInstance().getUserClientService().delete();
                 Alert alert = new Alert(null);
                 switch (res) {
-                    case OK: 
+                    case OK:
                         alert.setAlertType(AlertType.INFORMATION);
                         alert.setTitle("Sucesso");
                         alert.setContentText("Conta excluída com sucesso!");
                         alert.showAndWait();
                         btnDelete.getScene().getWindow().hide();
                         break;
-                    
-                    case BAD: 
+
+                    case BAD:
                         alert.setAlertType(AlertType.ERROR);
                         alert.setTitle("Falha");
                         alert.setContentText("Algo deu errado, tente novamente!");
                         alert.showAndWait();
                         break;
-                    
-                    case FORBIDDEN: 
+
+                    case FORBIDDEN:
                         alert.setAlertType(AlertType.ERROR);
                         alert.setTitle("Não enccontrado");
                         alert.setContentText("Usuário não encontrado. Faça um novo login e tente novamente!");
                         alert.showAndWait();
                         break;
-                    
+
                     default:
                         break;
                 }

@@ -38,7 +38,7 @@
                         <Insets />
                     </GridPane.margin>
                <children>
-                  <Button fx:id="btnVoltar" mnemonicParsing="false" prefWidth="100.0" text="Voltar" />
+                  <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBack" prefWidth="100.0" text="Voltar" />
                </children>
                 </VBox>
             <Label fx:id="lblUser" alignment="CENTER" contentDisplay="CENTER" text="Olá, Usuário" textAlignment="CENTER" textFill="WHITE">
