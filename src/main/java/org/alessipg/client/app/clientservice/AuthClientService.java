@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.client.util.StatusMapper;
 import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.util.Result;
 import org.alessipg.shared.records.request.UserLoginRequest;
 import org.alessipg.shared.records.request.UserLogoutRequest;
 
@@ -19,34 +21,44 @@ public class AuthClientService {
         this.gson = gson;
         this.client = SessionManager.getClient();
     }
-    public StatusTable login(String usuario, String senha) throws IOException {
+    public Result<Void> login(String usuario, String senha) throws IOException {
         UserLoginRequest msg = new UserLoginRequest(usuario, senha);
         String json = gson.toJson(msg);
         client.send(json);
-
         String response = client.receive();
-        if (response != null) {
-            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
-
-            switch (status) {
-                case "200":
-                    // Login bem-sucedido - extrair e armazenar token
-                    String token = jsonObject.has("token") ? jsonObject.get("token").getAsString() : null;
-                    if (token != null)
-                        SessionManager.getInstance().setToken(token);
-
-                    return StatusTable.OK;
-                case "401":
-                    return StatusTable.UNAUTHORIZED;
-                case "500":
-                    return StatusTable.INTERNAL_SERVER_ERROR;
-                default:
-                    return StatusTable.IM_TEAPOT;
-            }
-        } else {
-            return StatusTable.INTERNAL_SERVER_ERROR;
+        if (response == null) {
+            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
         }
+        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+        return StatusMapper.map(
+                jsonObject,
+                j -> {
+                    String token = j.has("token") ? j.get("token").getAsString() : null;
+                    if (token != null) {
+                        SessionManager.getInstance().setToken(token);
+                    }
+                    return null;
+                },
+                code -> {
+                    switch (code) {
+                        case UNAUTHORIZED:
+                            return "Usuário ou senha incorretos!";
+                        case BAD:
+                            return "Requisição inválida. Verifique os dados e tente novamente.";
+                        case FORBIDDEN:
+                            return "Acesso negado.";
+                        case NOT_FOUND:
+                            return "Usuário ou senha inválidos.";
+                        case ALREADY_EXISTS:
+                            return "Conflito ao processar a solicitação.";
+                        case UNPROCESSABLE_ENTITY:
+                            return "Dados faltantes ou fora do padrão.";
+                        case INTERNAL_SERVER_ERROR:
+                        default:
+                            return "Erro no servidor. Tente novamente mais tarde.";
+                    }
+                }
+        );
     }
 
 

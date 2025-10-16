@@ -70,7 +70,7 @@ public class MovieClientService {
                     }
                     JsonArray moviesResponse = jsonObject.getAsJsonArray("filmes");
                     List<MovieRecord> movies = new ArrayList<>();
-                    for (JsonElement m : moviesResponse) {
+                    for (JsonElement m : moviesResponse) {// TODO: Throw se não conseguir serializar
                         movies.add(gson.fromJson(m, MovieRecord.class));
                     }
                     return new MovieGetAllResponse(StatusTable.OK, movies);

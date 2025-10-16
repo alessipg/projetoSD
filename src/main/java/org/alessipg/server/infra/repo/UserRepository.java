@@ -10,24 +10,18 @@ import java.util.Optional;
 
 public class UserRepository {
 
-    public User save(User user) {
+    public void save(User user) {
         EntityManager em = Jpa.getEntityManager();
         try {
             em.getTransaction().begin();
-
-            if (user.getId() == 0) {
-                // Novo usuário
+            if (user.getId() == 0)
                 em.persist(user);
-            } else {
-                // Atualizar usuário existente
+            else
                 user = em.merge(user);
-            }
-
             em.getTransaction().commit();
-            return user;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro ao salvar usuário", e);
+            throw new DataAccessException("Erro ao salvar usuário", e);
         } finally {
             em.close();
         }
@@ -45,7 +39,7 @@ public class UserRepository {
         } catch (NoResultException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar usuário por nome", e);
+            throw new DataAccessException("Erro ao buscar usuário por nome", e);
         } finally {
             em.close();
         }
@@ -58,10 +52,9 @@ public class UserRepository {
             User user = em.contains(u) ? u : em.getReference(User.class, u.getId());
             em.remove(user);
             em.getTransaction().commit();
-            return;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro ao apagar usuário", e);
+            throw new DataAccessException("Erro ao apagar usuário", e);
         } finally {
             em.close();
         }
