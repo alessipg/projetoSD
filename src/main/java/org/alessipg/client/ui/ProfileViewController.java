@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.alessipg.client.infra.session.SessionManager;
-import org.alessipg.shared.enums.StatusTable;
+// removed unused StatusTable import
+import org.alessipg.shared.util.Result;
 import org.alessipg.shared.records.response.UserSelfGetResponse;
 
 import javafx.fxml.FXML;
@@ -56,33 +57,23 @@ public class ProfileViewController {
     private void onChangePassword() {
 
         try {
-            StatusTable res = SessionManager.getInstance().getUserClientService().update(pfPassword.getText());
-            Alert alert = new Alert(null);
-            switch (res) {
-                case OK:
-                    alert.setAlertType(AlertType.INFORMATION);
-                    alert.setTitle("Sucesso");
-                    alert.setContentText("Senha alterada com sucesso!");
-                    alert.showAndWait();
-
-                case BAD:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setTitle("Falha");
-                    alert.setContentText("Algo deu errado, tente novamente!");
-                    alert.showAndWait();
-
-                case FORBIDDEN:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setTitle("Não enccontrado");
-                    alert.setContentText("Usuário não encontrado. Faça um novo login e tente novamente!");
-                    alert.showAndWait();
-
-                default:
-                    break;
+            Result<Void> res = SessionManager.getInstance().getUserClientService().update(pfPassword.getText());
+            if (res instanceof Result.Success<Void>) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Sucesso");
+                alert.setContentText("Senha alterada com sucesso!");
+                alert.showAndWait();
+            } else if (res instanceof Result.Failure<Void> f) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Falha");
+                alert.setContentText(f.message());
+                alert.showAndWait();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Erro de conexão");
+            alert.setContentText("Não foi possível alterar a senha: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -102,33 +93,18 @@ public class ProfileViewController {
             confirmAlert.setHeaderText("Deseja excluir sua conta? Esta ação não pode ser desfeita.");
             Optional<ButtonType> buttonType = confirmAlert.showAndWait();
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-                StatusTable res = SessionManager.getInstance().getUserClientService().delete();
-                Alert alert = new Alert(null);
-                switch (res) {
-                    case OK:
-                        alert.setAlertType(AlertType.INFORMATION);
-                        alert.setTitle("Sucesso");
-                        alert.setContentText("Conta excluída com sucesso!");
-                        alert.showAndWait();
-                        btnDelete.getScene().getWindow().hide();
-                        break;
-
-                    case BAD:
-                        alert.setAlertType(AlertType.ERROR);
-                        alert.setTitle("Falha");
-                        alert.setContentText("Algo deu errado, tente novamente!");
-                        alert.showAndWait();
-                        break;
-
-                    case FORBIDDEN:
-                        alert.setAlertType(AlertType.ERROR);
-                        alert.setTitle("Não enccontrado");
-                        alert.setContentText("Usuário não encontrado. Faça um novo login e tente novamente!");
-                        alert.showAndWait();
-                        break;
-
-                    default:
-                        break;
+                Result<Void> res = SessionManager.getInstance().getUserClientService().delete();
+                if (res instanceof Result.Success<Void>) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Sucesso");
+                    alert.setContentText("Conta excluída com sucesso!");
+                    alert.showAndWait();
+                    btnDelete.getScene().getWindow().hide();
+                } else if (res instanceof Result.Failure<Void> f) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Falha");
+                    alert.setContentText(f.message());
+                    alert.showAndWait();
                 }
             }
         } catch (Exception e) {

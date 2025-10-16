@@ -20,17 +20,21 @@ public class AuthService {
   }
 
   public UserLoginResponse login(String user, String password) {
+    if (user == null || user.isBlank() || password == null || password.isBlank()) {
+      return new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+    }
+
     Optional<User> usuarioOpt = userService.findByName(user);
 
     if (!usuarioOpt.isPresent()) {
-      System.out.println("User doesn't exists.");
-      return new UserLoginResponse(StatusTable.UNAUTHORIZED, null);
+      System.out.println("Invalid credentials.");
+      return new UserLoginResponse(StatusTable.NOT_FOUND, null);
     }
 
     User userOpt = usuarioOpt.get();
     if (!userOpt.getPassword().equals(password)) {
-      System.out.println("Incorrect password.");
-      return new UserLoginResponse(StatusTable.UNAUTHORIZED, null);
+      System.out.println("Invalid credentials.");
+      return new UserLoginResponse(StatusTable.NOT_FOUND, null);
     }
 
     String token = JwtUtil.generateToken(

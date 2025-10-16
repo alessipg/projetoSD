@@ -4,6 +4,7 @@ import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.records.response.StatusResponse;
 import org.alessipg.shared.records.response.UserLoginResponse;
+import org.alessipg.shared.enums.StatusTable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -18,10 +19,17 @@ public class AuthController {
     }
 
     public String login(JsonObject json) {
-        String usuario = json.get("usuario").getAsString();
-        String senha = json.get("senha").getAsString();
-        UserLoginResponse status = authService.login(usuario, senha);
-        return gson.toJson(status);
+        try {
+            if (!json.has("usuario") || !json.has("senha")) {
+                return gson.toJson(new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null));
+            }
+            String usuario = json.get("usuario").getAsString();
+            String senha = json.get("senha").getAsString();
+            UserLoginResponse status = authService.login(usuario, senha);
+            return gson.toJson(status);
+        } catch (Exception e) {
+            return gson.toJson(new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null));
+        }
     }
 
     // TODO: a way to remove user when the client is closed

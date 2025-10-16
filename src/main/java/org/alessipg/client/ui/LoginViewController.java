@@ -13,7 +13,8 @@ import javafx.scene.control.PasswordField;
 import java.io.IOException;
 
 import org.alessipg.client.infra.session.SessionManager;
-import org.alessipg.shared.enums.StatusTable;
+// removed unused StatusTable import
+import org.alessipg.shared.util.Result;
 
 import javafx.event.ActionEvent;
 
@@ -29,10 +30,11 @@ public class LoginViewController {
         String usuario = txtUsuario.getText();
         String senha = txtSenha.getText();
         try {
-            StatusTable res = SessionManager.getInstance()
+            Result<Void> res = SessionManager.getInstance()
                     .getAuthClientService().login(usuario, senha);
-            switch (res) {
-                case StatusTable.OK:
+
+            if (res instanceof Result.Success<Void>) {
+                try {
                     FXMLLoader loader = new FXMLLoader(
                             getClass().getResource("/org/alessipg/client/ui/MoviesView.fxml"));
                     Parent novaTelaRoot = loader.load();
@@ -42,25 +44,19 @@ public class LoginViewController {
                     stage.setScene(scene);
                     stage.sizeToScene();
                     javafx.application.Platform.runLater(stage::centerOnScreen);
-
-                    break;
-                case StatusTable.UNAUTHORIZED: {
+                } catch (IOException e) {
                     Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Não autorizado");
-                    alert.setContentText("Usuário ou senha incorretos!");
+                    alert.setResizable(true);
+                    alert.setTitle("Falha ao carregar tela");
+                    alert.setContentText("Erro ao carregar a tela de filmes: " + e.getMessage());
                     alert.showAndWait();
-                    break;
                 }
-                case StatusTable.INTERNAL_SERVER_ERROR: {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Erro interno");
-                    alert.setContentText("Erro no servidor!");
-                    alert.showAndWait();
-                    break;
-                }
-                default:
-                    break;
-
+            } else if (res instanceof Result.Failure<Void> f) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setResizable(true);
+                alert.setTitle("Falha no login");
+                alert.setContentText(f.message());
+                alert.showAndWait();
             }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
@@ -76,47 +72,18 @@ public class LoginViewController {
         String usuario = txtUsuario.getText();
         String senha = txtSenha.getText();
         try {
-            StatusTable res = SessionManager.getInstance()
+            Result<Void> res = SessionManager.getInstance()
                     .getUserClientService().create(usuario, senha);
-            switch (res) {
-                case StatusTable.OK: {
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Sucesso");
-                    alert.setContentText("Usuário criado com sucesso!");
-                    alert.showAndWait();
-                    break;
-                }
-                case StatusTable.BAD: {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Algo deu errado");
-                    alert.setContentText("Verifique as informações e tente novamente");
-                    alert.showAndWait();
-                    break;
-                }
-                case StatusTable.ALREADY_EXISTS: {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Inválido");
-                    alert.setContentText("Usuário já cadastrado!");
-                    alert.showAndWait();
-                    break;
-                }
-                case StatusTable.INTERNAL_SERVER_ERROR: {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Erro interno");
-                    alert.setContentText("Erro no servidor!");
-                    alert.showAndWait();
-                    break;
-                }
-                case StatusTable.UNPROCESSABLE_ENTITY: {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Inválido");
-                    alert.setContentText("Dados faltantes ou fora do padrão");
-                    alert.showAndWait();
-                    break;
-                }
-                default:
-                    break;
-
+            if (res instanceof Result.Success<Void>) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Sucesso");
+                alert.setContentText("Usuário criado com sucesso!");
+                alert.showAndWait();
+            } else if (res instanceof Result.Failure<Void> f) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Algo deu errado");
+                alert.setContentText(f.message());
+                alert.showAndWait();
             }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);

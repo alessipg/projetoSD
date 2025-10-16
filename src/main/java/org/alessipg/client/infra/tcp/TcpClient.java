@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
@@ -23,7 +24,10 @@ public class TcpClient {
     }
 
     public void connect() throws IOException, UnknownHostException {
-        socket = new Socket(host, port);
+        socket = new Socket();
+        // Set connect and read timeouts to avoid indefinite blocking
+        socket.connect(new InetSocketAddress(host, port), 5000);
+        socket.setSoTimeout(5000);
         setupStreams();
         System.out.println("Connected to server " + host + ":" + port);
     }
@@ -48,16 +52,12 @@ public class TcpClient {
     }
 
     public String receive() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null) {
-            sb.append(line);
-            if (line.trim().endsWith("}")) {
-                break;
-            }
+        // Prefer a single line per message if the server sends newline-terminated JSON
+        String line = in.readLine();
+        if (line == null) {
+            return null;
         }
-        String received = sb.toString();
-        System.out.println("Received: " + received);
-        return received;
+        System.out.println("Received: " + line);
+        return line;
     }
 }
