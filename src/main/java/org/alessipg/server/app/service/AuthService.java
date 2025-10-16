@@ -13,42 +13,60 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class AuthService {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  public AuthService(UserService userService) {
-    this.userService = userService;
-  }
-
-  public UserLoginResponse login(String user, String password) {
-    if (user == null || user.isBlank() || password == null || password.isBlank()) {
-      return new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+    public AuthService(UserService userService) {
+        this.userService = userService;
     }
 
-    Optional<User> usuarioOpt = userService.findByName(user);
+    public UserLoginResponse login(String user, String password) {
+        try {
+            if (user == null || user.isBlank() || password == null || password.isBlank()) {
+                return new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+            }
 
-    if (!usuarioOpt.isPresent()) {
-      System.out.println("Invalid credentials.");
-      return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+            Optional<User> usuarioOpt = userService.findByName(user);
+
+            if (usuarioOpt.isEmpty()) {
+                System.out.println("Invalid credentials.");
+                return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+            }
+
+            User userOpt = usuarioOpt.get();
+            if (!userOpt.getPassword().equals(password)) {
+                System.out.println("Invalid credentials.");
+                return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+            }
+
+            String token = JwtUtil.generateToken(
+                    userOpt.getId(),
+                    userOpt.getName(),
+                    userOpt.isAdmin() ? "admin" : "usuario");
+            ServerView.addUser(userOpt.getName());
+            return new UserLoginResponse(StatusTable.OK, token);
+
+        } catch (Exception e) {
+            return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+        }
     }
 
-    User userOpt = usuarioOpt.get();
-    if (!userOpt.getPassword().equals(password)) {
-      System.out.println("Invalid credentials.");
-      return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+    public StatusResponse logout(DecodedJWT decodedJwt) {
+        try {
+            String user = decodedJwt.getClaim("usuario").asString();
+            System.out.println("Usuário " + user + " desconectando...");
+            ServerView.removeUser(user);
+            return new StatusResponse(StatusTable.OK);
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    String token = JwtUtil.generateToken(
-        userOpt.getId(),
-        userOpt.getName(),
-        userOpt.isAdmin() ? "admin" : "usuario");
-    ServerView.addUser(userOpt.getName());
-    return new UserLoginResponse(StatusTable.OK, token);
-  }
-
-  public StatusResponse logout(DecodedJWT decodedJwt) {
-    String user = decodedJwt.getClaim("usuario").asString();
-    System.out.println("Usuário " + user + " desconectando...");
-    ServerView.removeUser(user);
-    return new StatusResponse(StatusTable.OK);
-  }
+    public boolean isAdmin(DecodedJWT decodedJwt) {
+        try {
+            String funcao = decodedJwt.getClaim("funcao").asString();
+            return "admin".equals(funcao);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

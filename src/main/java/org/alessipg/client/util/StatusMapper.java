@@ -1,15 +1,15 @@
-package org.alessipg.client.app.clientservice;
+package org.alessipg.client.util;
 
 import com.google.gson.JsonObject;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.util.Result;
 import java.util.function.Function;
 
-final class StatusMapper {
+public final class StatusMapper {
 
     private StatusMapper() { }
 
-    static <T> Result<T> map(JsonObject jsonObject,
+    public static <T> Result<T> map(JsonObject jsonObject,
                              Function<JsonObject, T> successAdapter,
                              Function<StatusTable, String> errorMessageProvider) {
         String statusStr = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";

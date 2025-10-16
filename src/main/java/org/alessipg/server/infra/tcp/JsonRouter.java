@@ -45,6 +45,7 @@ public class JsonRouter {
             }
             String operation = json.get("operacao").getAsString();
             // Switch na operação
+            // TODO: se sobrar tempo, transformar em um hashmap
             switch (operation) {
                 // Auth
                 case "LOGIN":
@@ -76,7 +77,7 @@ public class JsonRouter {
             }
         } catch (JsonSyntaxException e) {
             System.err.println("Invalid JSON format: " + e.getMessage());
-            return gson.toJson(new StatusResponse(StatusTable.BAD));
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
         }
     }
 }

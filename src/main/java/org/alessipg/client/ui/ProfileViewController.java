@@ -36,21 +36,23 @@ public class ProfileViewController {
     @FXML
     public void initialize() {
         try {
-            UserSelfGetResponse user = SessionManager.getInstance().getUserClientService().selfGet();
-            if (user.usuario() != null && !user.usuario().isEmpty()) {
-                lblUser.setText("Olá, " + user.usuario() + "!");
-            } else {
-                lblUser.setText("Olá!");
+            Result<UserSelfGetResponse> res = SessionManager.getInstance().getUserClientService().selfGet();
+            if (res instanceof Result.Success<UserSelfGetResponse> s) {
+                UserSelfGetResponse user = s.data();
+                String name = user.usuario();
+                lblUser.setText(name != null && !name.isEmpty() ? "Olá, " + name + "!" : "Olá!");
+            } else if (res instanceof Result.Failure<UserSelfGetResponse> f) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Algo deu errado");
+                alert.setContentText(f.message());
+                alert.showAndWait();
             }
         } catch (IOException e) {
-            // TODO: improve error feedback
             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setContentText("Não foi possível buscar informações do usuário");
+            alert.setTitle("Erro de conexão");
+            alert.setContentText("Não foi possível buscar informações do usuário: " + e.getMessage());
             alert.showAndWait();
-            e.printStackTrace();
         }
-
     }
 
     @FXML
@@ -108,7 +110,10 @@ public class ProfileViewController {
                 }
             }
         } catch (Exception e) {
-            // TODO: same
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Erro de conexão");
+            alert.setContentText("Não foi possível excluir a conta: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 }

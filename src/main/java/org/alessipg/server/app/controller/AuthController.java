@@ -28,15 +28,24 @@ public class AuthController {
             UserLoginResponse status = authService.login(usuario, senha);
             return gson.toJson(status);
         } catch (Exception e) {
+            System.out.println("Controller - Erro ao fazer login: " + e.getMessage());
             return gson.toJson(new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null));
         }
     }
 
     // TODO: a way to remove user when the client is closed
     public String logout(JsonObject json) {
-        String token = json.get("token").getAsString();
-        
-        StatusResponse status = authService.logout(JwtUtil.validarToken(token));
-        return gson.toJson(status);
+        try {
+            if (!json.has("token")) {
+                return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+            }
+            String token = json.get("token").getAsString();
+
+            StatusResponse status = authService.logout(JwtUtil.validarToken(token));
+            return gson.toJson(status);
+        } catch (Exception e) {
+            System.out.println("Controller - Erro ao fazer logout: " + e.getMessage());
+            return gson.toJson(new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR));
+        }
     }
 }

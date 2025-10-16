@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.client.util.StatusMapper;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.util.Result;
 import org.alessipg.shared.records.request.UserLoginRequest;
