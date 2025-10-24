@@ -36,7 +36,7 @@ public class AdminViewController {
         listMovies.setCellFactory(new Callback<ListView<MovieRecord>, ListCell<MovieRecord>>() {
             @Override
             public ListCell<MovieRecord> call(ListView<MovieRecord> param) {
-                return new FilmeListCell();
+                return new MovieListCell();
             }
         });
 

@@ -7,7 +7,7 @@ import org.alessipg.client.infra.tcp.TcpClient;
 // removed unused StatusTable import
 import org.alessipg.client.util.StatusMapper;
 import org.alessipg.shared.records.request.UserDeleteRequest;
-import org.alessipg.shared.records.request.UserRegisterRequest;
+import org.alessipg.shared.records.request.UserCreateRequest;
 import org.alessipg.shared.records.request.UserSelfGetRequest;
 import org.alessipg.shared.records.request.UserUpdateRequest;
 import org.alessipg.shared.records.response.UserSelfGetResponse;
@@ -28,7 +28,7 @@ public class UserClientService {
     }
 
     public Result<Void> create(String usuario, String senha) throws IOException {
-        UserRegisterRequest msg = new UserRegisterRequest(usuario, senha);
+        UserCreateRequest msg = new UserCreateRequest(usuario, senha);
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();

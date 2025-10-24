@@ -1,7 +1,7 @@
 package org.alessipg.shared.records.request;
 
-public record UserRegisterRequest(String operacao, Usuario usuario) {
-    public UserRegisterRequest(String nome, String senha) {
+public record UserCreateRequest(String operacao, Usuario usuario) {
+    public UserCreateRequest(String nome, String senha) {
         this("CRIAR_USUARIO", new Usuario(nome, senha));
     }
 

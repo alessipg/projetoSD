@@ -36,6 +36,9 @@ public class AuthClientService {
                     String token = j.has("token") ? j.get("token").getAsString() : null;
                     if (token != null) {
                         SessionManager.getInstance().setToken(token);
+                    }else{
+                        throw new IllegalStateException("Token não encontrado na resposta do servidor.");
+                        //TODO: acho que precisa mudar isso
                     }
                     return null;
                 },
