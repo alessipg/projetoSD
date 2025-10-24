@@ -8,13 +8,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public class FilmeListCell extends ListCell<MovieRecord> {
+public class MovieListCell extends ListCell<MovieRecord> {
     private VBox vbox = new VBox(5);
     private Label lblTitulo = new Label();
     private Label lblInfo = new Label();
     private Label lblNota = new Label();
 
-    public FilmeListCell() {
+    public MovieListCell() {
         lblTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         lblInfo.setStyle("-fx-text-fill: gray;");
         this.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {

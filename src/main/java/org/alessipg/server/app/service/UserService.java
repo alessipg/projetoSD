@@ -8,6 +8,7 @@ import org.alessipg.shared.records.response.UserSelfGetResponse;
 import org.alessipg.server.infra.repo.UserRepository;
 import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
+import org.alessipg.shared.records.util.UserRecord;
 
 import java.util.Optional;
 
@@ -19,8 +20,10 @@ public class UserService {
 
     }
 
-    public StatusResponse create(String name, String password) {
-        if (name == null || name.isBlank() || password == null || password.isBlank())
+    public StatusResponse create(UserRecord user) {
+        String name = user.nome();
+        String password = user.senha();
+        if (!isValidUserInfo(name, password))
             return new StatusResponse(StatusTable.BAD);
         try {
             if (findByName(name).isPresent())
@@ -32,8 +35,13 @@ public class UserService {
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
     }
-
-    public Optional<User> findByName(String name) {
+    private boolean isValidUserInfo(String name, String password) {
+        return name != null && !name.isBlank() && password != null && !password.isBlank()
+                && password.length() >= 3 && name.length() >= 3
+                && name.length() <= 20 && password.length() <= 20
+                && name.matches("^[a-zA-Z0-9]+$") && password.matches("^[a-zA-Z0-9]+$");
+    }
+    public Optional<User> findByName(String name) throws DataAccessException {
         return userRepository.findByNome(name);
     }
 
@@ -59,8 +67,8 @@ public class UserService {
         try {
             String name = JwtUtil.validarToken(token)
                     .getClaim("usuario").asString();
-            if (name == null)
-                return new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY);
+            if (!isValidUserInfo(name, password))
+                return new StatusResponse(StatusTable.BAD);
             Optional<User> user = findByName(name);
             if (user.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
