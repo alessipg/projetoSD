@@ -1,6 +1,6 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public record MovieUpdateRequest(
         String operacao,

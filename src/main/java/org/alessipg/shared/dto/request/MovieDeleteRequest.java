@@ -1,4 +1,4 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
 public record MovieDeleteRequest(String operacao, String id, String token) {
     public MovieDeleteRequest(String id, String token) {

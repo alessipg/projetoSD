@@ -34,3 +34,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Database Files ###
+data/*.db
+data/*.sqlite
+data/*.sqlite3

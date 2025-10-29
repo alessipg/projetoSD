@@ -1,6 +1,6 @@
 package org.alessipg.client.ui;
 
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;

@@ -2,14 +2,13 @@ package org.alessipg.client.app.clientservice;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
-import org.alessipg.client.util.StatusMapper;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.util.Result;
-import org.alessipg.shared.records.request.UserLoginRequest;
-import org.alessipg.shared.records.request.UserLogoutRequest;
+import org.alessipg.shared.dto.request.UserLoginRequest;
+import org.alessipg.shared.dto.request.UserLogoutRequest;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserLoginResponse;
 
 import java.io.IOException;
 
@@ -17,79 +16,65 @@ public class AuthClientService {
 
     private final Gson gson;
     private final TcpClient client;
+
     public AuthClientService(Gson gson) {
         this.gson = gson;
         this.client = SessionManager.getClient();
     }
-    public Result<Void> login(String usuario, String senha) throws IOException {
+
+    public UserLoginResponse login(String usuario, String senha) throws IOException {
         UserLoginRequest msg = new UserLoginRequest(usuario, senha);
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
         if (response == null) {
-            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
+            return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
         }
-        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-        return StatusMapper.map(
-                jsonObject,
-                j -> {
-                    String token = j.has("token") ? j.get("token").getAsString() : null;
-                    if (token != null) {
-                        SessionManager.getInstance().setToken(token);
-                    }else{
-                        throw new IllegalStateException("Token não encontrado na resposta do servidor.");
-                        //TODO: acho que precisa mudar isso
-                    }
-                    return null;
-                },
-                code -> {
-                    switch (code) {
-                        case UNAUTHORIZED:
-                            return "Usuário ou senha incorretos!";
-                        case BAD:
-                            return "Requisição inválida. Verifique os dados e tente novamente.";
-                        case FORBIDDEN:
-                            return "Acesso negado.";
-                        case NOT_FOUND:
-                            return "Usuário ou senha inválidos.";
-                        case ALREADY_EXISTS:
-                            return "Conflito ao processar a solicitação.";
-                        case UNPROCESSABLE_ENTITY:
-                            return "Dados faltantes ou fora do padrão.";
-                        case INTERNAL_SERVER_ERROR:
-                        default:
-                            return "Erro no servidor. Tente novamente mais tarde.";
-                    }
-                }
-        );
+        try {
+            UserLoginResponse res = gson.fromJson(response, UserLoginResponse.class);
+            if (res == null) {
+                return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+            }
+            String status = res.status();
+            switch (status) {
+                case "200":
+                    if (res.token() == null)
+                        return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+                    SessionManager.getInstance().setToken(res.token());
+                    return res;
+                case "400":
+                    return new UserLoginResponse(StatusTable.BAD, null);
+                case "403":
+                    return new UserLoginResponse(StatusTable.FORBIDDEN, null);
+                case "422":
+                    return new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+                default:
+                    return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+            }
+        } catch (Exception e) {
+            return new UserLoginResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+        }
     }
 
 
-
-    public StatusTable logout() throws IOException {
+    public StatusResponse logout() throws IOException {
         String token = SessionManager.getInstance().getToken();
         UserLogoutRequest msg = new UserLogoutRequest(token);
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
-        if (response != null) {
-            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
-            switch (status) {
-                case "200":
-                    SessionManager.getInstance().setToken(null);
-                    return StatusTable.OK;
-                case "400":
-                    return StatusTable.BAD;
-                case "404":
-                    return StatusTable.NOT_FOUND;
-                case "500":
-                    return StatusTable.INTERNAL_SERVER_ERROR;
-                default:
-                    return StatusTable.IM_TEAPOT;
+        if (response == null) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
+        try {
+            StatusResponse res = gson.fromJson(response, StatusResponse.class);
+            if (res != null) {
+                return res;
+            } else {
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
             }
-        } else {
-            return StatusTable.INTERNAL_SERVER_ERROR;
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
     }
 }

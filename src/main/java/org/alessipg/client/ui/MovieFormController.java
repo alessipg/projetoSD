@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.request.MovieCreateRequest;
+import org.alessipg.shared.dto.request.MovieCreateRequest;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
@@ -21,7 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.util.converter.IntegerStringConverter;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MovieFormController {
     private Map<Genre, CheckBox> checkBoxGeneroMap = new HashMap<>();

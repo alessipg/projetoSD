@@ -1,12 +1,11 @@
 package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.UserService;
-import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.response.UserSelfGetResponse;
-import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserSelfGetResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.alessipg.shared.records.util.UserRecord;
+import org.alessipg.shared.dto.util.UserRecord;
 
 public class UserController {
     private final UserService userService;
@@ -17,7 +16,6 @@ public class UserController {
         this.gson = gson;
     }
 
-    // TODO: implement throws for inexistent values
     public String create(JsonObject json) {
         UserRecord user = gson.fromJson(json.get("usuario"), UserRecord.class);
         if (user == null)

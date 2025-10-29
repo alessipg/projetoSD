@@ -6,8 +6,8 @@ import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.response.UserLoginResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserLoginResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -22,20 +22,20 @@ public class AuthService {
     public UserLoginResponse login(String user, String password) {
         try {
             if (user == null || user.isBlank() || password == null || password.isBlank()) {
-                return new UserLoginResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+                return new UserLoginResponse(StatusTable.FORBIDDEN, null);
             }
 
             Optional<User> usuarioOpt = userService.findByName(user);
 
             if (usuarioOpt.isEmpty()) {
                 System.out.println("Invalid credentials.");
-                return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+                return new UserLoginResponse(StatusTable.FORBIDDEN, null);
             }
 
             User userOpt = usuarioOpt.get();
             if (!userOpt.getPassword().equals(password)) {
                 System.out.println("Invalid credentials.");
-                return new UserLoginResponse(StatusTable.NOT_FOUND, null);
+                return new UserLoginResponse(StatusTable.FORBIDDEN, null);
             }
 
             String token = JwtUtil.generateToken(

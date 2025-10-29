@@ -1,13 +1,12 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
 import java.util.List;
 
+import org.alessipg.shared.dto.util.MovieCreateDto;
 import org.alessipg.shared.enums.Genre;
-import org.alessipg.shared.records.util.MovieCreateDto;
 
 
-
-public record MovieCreateRequest(String operacao, MovieCreateDto filme,String token) {
+public record MovieCreateRequest(String operacao, MovieCreateDto filme, String token) {
 
     public MovieCreateRequest(String titulo, String diretor, Integer ano, List<Genre> genero,
             String sinopse, String token) {
