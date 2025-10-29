@@ -9,11 +9,10 @@ import com.google.gson.JsonSyntaxException;
 import lombok.Setter;
 
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.response.StatusResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.server.app.controller.AuthController;
 import org.alessipg.server.app.controller.UserController;
 import org.alessipg.server.app.controller.MovieController;
-import org.alessipg.shared.util.IntegerAsStringAdapter;
 
 
 public class JsonRouter {
@@ -26,7 +25,6 @@ public class JsonRouter {
     private static MovieController MovieController;
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Integer.class, new IntegerAsStringAdapter())
             .create();
 
     // Validar JSON antes de processar

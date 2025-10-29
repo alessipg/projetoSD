@@ -1,4 +1,4 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
 public record UserDeleteRequest(String operacao,String token) {
     public UserDeleteRequest(String token){

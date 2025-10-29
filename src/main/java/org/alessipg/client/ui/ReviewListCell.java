@@ -5,8 +5,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.alessipg.shared.records.util.MovieRecord;
-import org.alessipg.shared.records.util.ReviewRecord;
+import org.alessipg.shared.dto.util.ReviewRecord;
 
 public class ReviewListCell extends ListCell<ReviewRecord> {
     private VBox vbox = new VBox(5);

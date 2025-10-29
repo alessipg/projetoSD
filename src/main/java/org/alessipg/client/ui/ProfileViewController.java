@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.alessipg.client.infra.session.SessionManager;
-// removed unused StatusTable import
-import org.alessipg.shared.util.Result;
-import org.alessipg.shared.records.response.UserSelfGetResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserSelfGetResponse;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,15 +35,14 @@ public class ProfileViewController {
     @FXML
     public void initialize() {
         try {
-            Result<UserSelfGetResponse> res = SessionManager.getInstance().getUserClientService().selfGet();
-            if (res instanceof Result.Success<UserSelfGetResponse> s) {
-                UserSelfGetResponse user = s.data();
-                String name = user.usuario();
+            UserSelfGetResponse res = SessionManager.getInstance().getUserClientService().selfGet();
+            if (res.status().equals("200")) {
+                String name = res.usuario();
                 lblUser.setText(name != null && !name.isEmpty() ? "Olá, " + name + "!" : "Olá!");
-            } else if (res instanceof Result.Failure<UserSelfGetResponse> f) {
+            } else {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Algo deu errado");
-                alert.setContentText(f.message());
+                alert.setContentText(res.mensagem());
                 alert.showAndWait();
             }
         } catch (IOException e) {
@@ -59,16 +57,17 @@ public class ProfileViewController {
     private void onChangePassword() {
 
         try {
-            Result<Void> res = SessionManager.getInstance().getUserClientService().update(pfPassword.getText());
-            if (res instanceof Result.Success<Void>) {
+            StatusResponse res = SessionManager.getInstance().getUserClientService().update(pfPassword.getText());
+            if (res.status().equals("200")) {
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Sucesso");
-                alert.setContentText("Senha alterada com sucesso!");
+                alert.setContentText(res.status());
                 alert.showAndWait();
-            } else if (res instanceof Result.Failure<Void> f) {
+                pfPassword.clear();
+            } else {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Falha");
-                alert.setContentText(f.message());
+                alert.setContentText(res.mensagem());
                 alert.showAndWait();
             }
         } catch (IOException e) {
@@ -95,17 +94,17 @@ public class ProfileViewController {
             confirmAlert.setHeaderText("Deseja excluir sua conta? Esta ação não pode ser desfeita.");
             Optional<ButtonType> buttonType = confirmAlert.showAndWait();
             if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-                Result<Void> res = SessionManager.getInstance().getUserClientService().delete();
-                if (res instanceof Result.Success<Void>) {
+                StatusResponse res = SessionManager.getInstance().getUserClientService().delete();
+                if (res.status().equals("200")) {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Sucesso");
-                    alert.setContentText("Conta excluída com sucesso!");
+                    alert.setContentText(res.mensagem());
                     alert.showAndWait();
                     btnDelete.getScene().getWindow().hide();
-                } else if (res instanceof Result.Failure<Void> f) {
+                } else {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Falha");
-                    alert.setContentText(f.message());
+                    alert.setContentText(res.mensagem());
                     alert.showAndWait();
                 }
             }

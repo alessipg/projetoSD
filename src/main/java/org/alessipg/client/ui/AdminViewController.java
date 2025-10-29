@@ -19,8 +19,8 @@ import javafx.beans.value.ChangeListener;
 import lombok.Getter;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.response.MovieGetAllResponse;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.response.MovieGetAllResponse;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public class AdminViewController {
 

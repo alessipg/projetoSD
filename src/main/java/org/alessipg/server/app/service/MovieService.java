@@ -7,10 +7,10 @@ import org.alessipg.server.infra.repo.MovieRepository;
 import org.alessipg.shared.domain.model.Movie;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.response.MovieGetAllResponse;
-import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.util.MovieCreateDto;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.response.MovieGetAllResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.util.MovieCreateDto;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MovieService {
     private final MovieRepository movieRepository;
@@ -56,7 +56,7 @@ public class MovieService {
                             m.getSynopsis()));
         }
 
-        return new MovieGetAllResponse("200", formmatedMovies);
+        return new MovieGetAllResponse(StatusTable.OK, formmatedMovies);
     }
 
     public StatusResponse update(MovieRecord m) {

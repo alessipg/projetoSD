@@ -1,4 +1,4 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
 public record MovieGetAllRequest(String operacao) {
     public MovieGetAllRequest(){

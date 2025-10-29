@@ -2,20 +2,19 @@ package org.alessipg.client.app.clientservice;
 
 import java.io.IOException;
 
+import com.google.gson.JsonSyntaxException;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
-// removed unused StatusTable import
-import org.alessipg.client.util.StatusMapper;
-import org.alessipg.shared.records.request.UserDeleteRequest;
-import org.alessipg.shared.records.request.UserCreateRequest;
-import org.alessipg.shared.records.request.UserSelfGetRequest;
-import org.alessipg.shared.records.request.UserUpdateRequest;
-import org.alessipg.shared.records.response.UserSelfGetResponse;
-import org.alessipg.shared.records.util.UserRecord;
-import org.alessipg.shared.util.Result;
+import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.dto.request.UserDeleteRequest;
+import org.alessipg.shared.dto.request.UserCreateRequest;
+import org.alessipg.shared.dto.request.UserSelfGetRequest;
+import org.alessipg.shared.dto.request.UserUpdateRequest;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserSelfGetResponse;
+import org.alessipg.shared.dto.util.UserRecord;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 public class UserClientService {
 
@@ -27,35 +26,27 @@ public class UserClientService {
         this.client = SessionManager.getClient();
     }
 
-    public Result<Void> create(String usuario, String senha) throws IOException {
+    public StatusResponse create(String usuario, String senha) throws IOException {
         UserCreateRequest msg = new UserCreateRequest(usuario, senha);
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
         if (response == null) {
-            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
-        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-        return StatusMapper.map(
-            jsonObject,
-            j -> null,
-            code -> {
-                switch (code) {
-                    case BAD:
-                        return "Verifique as informações e tente novamente.";
-                    case ALREADY_EXISTS:
-                        return "Usuário já cadastrado!";
-                    case UNPROCESSABLE_ENTITY:
-                        return "Dados faltantes ou fora do padrão.";
-                    case INTERNAL_SERVER_ERROR:
-                    default:
-                        return "Erro no servidor. Tente novamente mais tarde.";
-                }
+        try {
+            StatusResponse res = gson.fromJson(response, StatusResponse.class);
+            if (res != null) {
+                return res;
+            } else {
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
             }
-        );
+        } catch(Exception e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Result<UserSelfGetResponse> selfGet() throws IOException {
+    public UserSelfGetResponse selfGet() throws IOException {
         String token = SessionManager.getInstance().getToken();
         UserSelfGetRequest msg = new UserSelfGetRequest(token);
         String json = gson.toJson(msg);
@@ -63,87 +54,58 @@ public class UserClientService {
         client.send(json);
         String response = client.receive();
         if (response == null) {
-            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
+            return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
         }
-    
-        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-        return StatusMapper.map(
-            jsonObject,
-            j -> {
-                String status = j.has("status") ? j.get("status").getAsString() : "";
-                String user = j.has("usuario") ? j.get("usuario").getAsString() : "";
-                return new UserSelfGetResponse(status, user.isEmpty() ? null : user);
-            },
-            code -> {
-                switch (code) {
-                    case UNAUTHORIZED:
-                        return "Token inválido ou expirado. Faça login novamente.";
-                    case UNPROCESSABLE_ENTITY:
-                        return "Token ausente ou inválido.";
-                    case NOT_FOUND:
-                        return "Usuário não encontrado.";
-                    case INTERNAL_SERVER_ERROR:
-                    default:
-                        return "Erro no servidor. Tente novamente mais tarde.";
-                }
+        try{
+            UserSelfGetResponse res = gson.fromJson(response, UserSelfGetResponse.class);
+            if (res != null) {
+                return res;
+            } else {
+                return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
             }
-        );
+        } catch(Exception e) {
+            return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+        }
     }
 
-    public Result<Void> update(String newPassword) throws IOException {
+    public StatusResponse update(String newPassword) throws IOException {
         UserRecord user = new UserRecord(null,newPassword);
         UserUpdateRequest msg = new UserUpdateRequest(user,SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
-        if (response == null) {
-            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
-        }
-        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-        return StatusMapper.map(
-            jsonObject,
-            j -> null,
-            code -> {
-                switch (code) {
-                    case BAD:
-                        return "Algo deu errado, tente novamente!";
-                    case NOT_FOUND:
-                        return "Usuário não encontrado. Faça login novamente.";
-                    case FORBIDDEN:
-                        return "Acesso negado.";
-                    case INTERNAL_SERVER_ERROR:
-                    default:
-                        return "Erro no servidor. Tente novamente mais tarde.";
-                }
+        try {
+            if (response == null) {
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
             }
-        );
+            StatusResponse res = gson.fromJson(response, StatusResponse.class);
+            if (res != null) {
+                return res;
+            } else {
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Result<Void> delete() throws IOException {
+    public StatusResponse delete() throws IOException {
         UserDeleteRequest msg = new UserDeleteRequest(SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
         if (response == null) {
-            throw new IOException("Conexão encerrada pelo servidor ou resposta vazia");
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
-        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-        return StatusMapper.map(
-            jsonObject,
-            j -> null,
-            code -> {
-                switch (code) {
-                    case BAD:
-                        return "Algo deu errado, tente novamente!";
-                    case NOT_FOUND:
-                        return "Usuário não encontrado. Faça login novamente.";
-                    case FORBIDDEN:
-                        return "Acesso negado.";
-                    case INTERNAL_SERVER_ERROR:
-                    default:
-                        return "Erro no servidor. Tente novamente mais tarde.";
-                }
+        try {
+            StatusResponse res = gson.fromJson(response, StatusResponse.class);
+            if (res != null) {
+                return res;
+            } else {
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
             }
-        );
+        } catch (JsonSyntaxException e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
     }
 }

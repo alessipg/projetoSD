@@ -1,4 +1,4 @@
-package org.alessipg.shared.records.util;
+package org.alessipg.shared.dto.util;
 
 import java.util.List;
 import java.util.stream.Collectors;

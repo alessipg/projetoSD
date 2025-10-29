@@ -1,4 +1,4 @@
-package org.alessipg.shared.records.util;
+package org.alessipg.shared.dto.util;
 
 public record ReviewRecord (
     int id,
