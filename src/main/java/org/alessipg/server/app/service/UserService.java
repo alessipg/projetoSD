@@ -3,25 +3,32 @@ package org.alessipg.server.app.service;
 import org.alessipg.server.infra.repo.DataAccessException;
 import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.response.UserSelfGetResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserSelfGetResponse;
 import org.alessipg.server.infra.repo.UserRepository;
 import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
+import org.alessipg.shared.dto.util.UserRecord;
 
 import java.util.Optional;
+// Java
+import java.util.regex.Pattern;
 
 public class UserService {
+
     private final UserRepository userRepository;
+    private static final Pattern ALNUM_3_20 = Pattern.compile("^[a-zA-Z0-9]{3,20}$");
 
     public UserService(UserRepository usuarioRepository) {
         this.userRepository = usuarioRepository;
 
     }
 
-    public StatusResponse create(String name, String password) {
-        if (name == null || name.isBlank() || password == null || password.isBlank())
-            return new StatusResponse(StatusTable.BAD);
+    public StatusResponse create(UserRecord user) {
+        String name = user.nome();
+        String password = user.senha();
+        if (isInvalidUserInfo(name, password))
+            return new StatusResponse(StatusTable.INVALID_INPUT);
         try {
             if (findByName(name).isPresent())
                 return new StatusResponse(StatusTable.ALREADY_EXISTS);
@@ -33,7 +40,12 @@ public class UserService {
         }
     }
 
-    public Optional<User> findByName(String name) {
+    private boolean isInvalidUserInfo(String name, String password) {
+        if (name == null || password == null) return true;
+        return !ALNUM_3_20.matcher(name).matches()
+                || !ALNUM_3_20.matcher(password).matches();
+    }
+    public Optional<User> findByName(String name) throws DataAccessException {
         return userRepository.findByNome(name);
     }
 
@@ -59,8 +71,10 @@ public class UserService {
         try {
             String name = JwtUtil.validarToken(token)
                     .getClaim("usuario").asString();
-            if (name == null)
+            if(name == null)
                 return new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY);
+            if (isInvalidUserInfo(name, password))
+                return new StatusResponse(StatusTable.INVALID_INPUT);
             Optional<User> user = findByName(name);
             if (user.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
@@ -78,7 +92,7 @@ public class UserService {
             String name = JwtUtil.validarToken(token)
                     .getClaim("usuario").asString();
             if (name == null)
-                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+                return new StatusResponse(StatusTable.UNAUTHORIZED);
             Optional<User> optUser = findByName(name);
             if (optUser.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
@@ -92,4 +106,3 @@ public class UserService {
         }
     }
 }
-

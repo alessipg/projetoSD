@@ -1,6 +1,6 @@
-package org.alessipg.shared.records.request;
+package org.alessipg.shared.dto.request;
 
-import org.alessipg.shared.records.util.UserRecord;
+import org.alessipg.shared.dto.util.UserRecord;
 
 public record UserUpdateRequest(String operacao, UserRecord usuario,String token) {
     public UserUpdateRequest(UserRecord usuario,String token){

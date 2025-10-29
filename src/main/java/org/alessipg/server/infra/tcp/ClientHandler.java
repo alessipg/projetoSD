@@ -2,13 +2,13 @@ package org.alessipg.server.infra.tcp;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.alessipg.shared.enums.StatusTable;
 
 public class ClientHandler implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -18,8 +18,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         try (
                 BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream(), "UTF-8"));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true, Charset.forName("UTF-8"))) {
+                        new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8)) {
             String message;
             while ((message = in.readLine()) != null) {
                 System.out.println("Received from client: " + message);
@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
                         System.out.println("Sending response: " + response);
                         out.println(response); // Envia a resposta JSON do JsonRouter
                     } else {
-                        String errorResponse = "{\"status\":\""+StatusTable.UNPROCESSABLE_ENTITY.getCode()+"\"}";
+                        String errorResponse = "{\"status\":\""+StatusTable.INTERNAL_SERVER_ERROR.getStatus()+"\",\"mensagem\":\"Erro interno, resposta não gerada\"}";
                         System.out.println("Sending error response: " + errorResponse);
                         out.println(errorResponse);
                     }
@@ -39,7 +39,7 @@ public class ClientHandler implements Runnable {
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing message: " + e.getMessage());
-                    //out.println("Error: " + e.getMessage());
+                    out.println("{\"status\":\""+StatusTable.INTERNAL_SERVER_ERROR.getStatus()+"\",\"mensagem\":\"Internal server error\"}"); // Resposta de erro genérica
                 }
             }
 

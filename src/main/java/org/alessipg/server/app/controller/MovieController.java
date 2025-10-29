@@ -3,14 +3,14 @@ package org.alessipg.server.app.controller;
 import java.util.List;
 
 import org.alessipg.server.app.service.MovieService;
-import org.alessipg.shared.records.response.MovieGetAllResponse;
-import org.alessipg.shared.records.response.StatusResponse;
-import org.alessipg.shared.records.util.MovieCreateDto;
+import org.alessipg.shared.dto.response.MovieGetAllResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.util.MovieCreateDto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MovieController {
 

@@ -13,8 +13,9 @@ import javafx.util.Callback;
 import java.io.IOException;
 
 import org.alessipg.client.infra.session.SessionManager;
-import org.alessipg.shared.records.response.MovieGetAllResponse;
-import org.alessipg.shared.records.util.MovieRecord;
+import org.alessipg.shared.enums.StatusTable;
+import org.alessipg.shared.dto.response.MovieGetAllResponse;
+import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MoviesViewController {
     // TODO: Change all class names to english
@@ -27,12 +28,13 @@ public class MoviesViewController {
         listMovies.setCellFactory(new Callback<ListView<MovieRecord>, ListCell<MovieRecord>>() {
             @Override
             public ListCell<MovieRecord> call(ListView<MovieRecord> param) {
-                return new FilmeListCell();
+                return new MovieListCell();
             }
         });
 
         try {
-            MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
+            //MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
+            MovieGetAllResponse movies = new MovieGetAllResponse(StatusTable.BAD,null);
             switch (movies.status()) {
                 case "200":
                     listMovies.getItems().addAll(movies.filmes());
@@ -41,7 +43,7 @@ public class MoviesViewController {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status());
                     alert.showAndWait();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
