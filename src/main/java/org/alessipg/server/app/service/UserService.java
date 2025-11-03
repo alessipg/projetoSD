@@ -2,6 +2,8 @@ package org.alessipg.server.app.service;
 
 import org.alessipg.server.infra.repo.DataAccessException;
 import org.alessipg.shared.domain.model.User;
+import org.alessipg.shared.dto.response.UserGetAllResponse;
+import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.response.UserSelfGetResponse;
@@ -10,6 +12,7 @@ import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.dto.util.UserRecord;
 
+import java.util.List;
 import java.util.Optional;
 // Java
 import java.util.regex.Pattern;
@@ -102,6 +105,50 @@ public class UserService {
             return new StatusResponse(StatusTable.OK);
         } catch (Exception e) {
             System.out.println("Service - Erro ao apagar usuário: " + e.getMessage());
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public UserGetAllResponse getAll(String token) {
+        try {
+            String funcao = JwtUtil.validarToken(token)
+                    .getClaim("funcao").asString();
+            if (!funcao.equals("admin"))
+                return new UserGetAllResponse(StatusTable.FORBIDDEN,
+                        StatusTable.FORBIDDEN.getMessage(), null);
+            Optional<List<User>> users = userRepository.findAll();
+            if (users.isEmpty())
+                return new UserGetAllResponse(StatusTable.OK,
+                        StatusTable.OK.getMessage(), List.of());
+            List<UserView> userList = users.get().stream().map(
+                    u -> new UserView(u.getId(), u.getName())
+            ).toList(
+            );
+            return new UserGetAllResponse(StatusTable.OK,
+                    StatusTable.OK.getMessage(), userList);
+        } catch (Exception e) {
+            System.out.println("Service - Erro ao obter todos os usuários: " + e.getMessage());
+            return new UserGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR,
+                    StatusTable.INTERNAL_SERVER_ERROR.getMessage(), null);
+        }
+    }
+
+    public StatusResponse adminUpdate(String token, int userId, String password) {
+        try{
+            String funcao = JwtUtil.validarToken(token)
+                    .getClaim("funcao").asString();
+            if (!funcao.equals("admin"))
+                return new StatusResponse(StatusTable.FORBIDDEN);
+            if (password == null || !ALNUM_3_20.matcher(password).matches())
+                return new StatusResponse(StatusTable.INVALID_INPUT);
+            Optional<User> optUser= userRepository.findById(userId);
+            if(optUser.isEmpty())
+                return new StatusResponse(StatusTable.NOT_FOUND);
+            User user = optUser.get();
+            user.setPassword(password);
+            persist(user);
+            return new StatusResponse(StatusTable.OK);
+        }catch(Exception e){
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
     }

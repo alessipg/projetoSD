@@ -33,8 +33,7 @@ public class MoviesViewController {
         });
 
         try {
-            //MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
-            MovieGetAllResponse movies = new MovieGetAllResponse(StatusTable.BAD,null);
+            MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
             switch (movies.status()) {
                 case "200":
                     listMovies.getItems().addAll(movies.filmes());
@@ -44,8 +43,8 @@ public class MoviesViewController {
                     alert.showAndWait();
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 

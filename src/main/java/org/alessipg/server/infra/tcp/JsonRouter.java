@@ -17,17 +17,17 @@ import org.alessipg.server.app.controller.MovieController;
 
 public class JsonRouter {
     // Setter para injetar dependências
+    //TODO: corrigir essa coisa feia
     @Setter
     private static UserController UserController;
     @Setter
     private static AuthController AuthController;
     @Setter
     private static MovieController MovieController;
-
     private static final Gson gson = new GsonBuilder()
             .create();
-
     // Validar JSON antes de processar
+
     public static String parse(String message) {
         if (message == null || message.trim().isEmpty()) {
             System.err.println("Empty message received");
@@ -58,6 +58,8 @@ public class JsonRouter {
                 // Read
                 case "LISTAR_FILMES":
                     return MovieController.getAll();
+                case "LISTAR_USUARIOS":
+                    return UserController.getAll(json);
                 case "LISTAR_PROPRIO_USUARIO":
                     return UserController.selfGet(json);
                 // Update
@@ -65,6 +67,8 @@ public class JsonRouter {
                     return UserController.update(json);
                 case "EDITAR_FILME":
                     return MovieController.update(json);
+                case "ADMIN_EDITAR_USUARIO":
+                    return UserController.adminUpdate(json);
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);

@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
@@ -18,6 +17,7 @@ import javafx.beans.value.ChangeListener;
 
 import lombok.Getter;
 import org.alessipg.client.infra.session.SessionManager;
+import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
@@ -26,10 +26,12 @@ public class AdminViewController {
 
     @FXML
     private ListView<MovieRecord> listMovies;
+    @FXML
+    private ListView<UserView> listUsers;
     @Getter
     private MovieRecord selectedMovie;
-    @FXML
-    private Button btnEdit;
+    @Getter
+    private UserView selectedUser;
     @FXML
     public void initialize() {
         // Custom cell factory
@@ -39,7 +41,13 @@ public class AdminViewController {
                 return new MovieListCell();
             }
         });
-
+        listUsers.setCellFactory(new  Callback<ListView<UserView>, ListCell<UserView>>() {
+            @Override
+            public ListCell<UserView> call(ListView<UserView> param) {
+                return new UserListCell();
+            }
+        });
+        loadUsers();
         loadMovies();
 
         listMovies.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<MovieRecord>() {
@@ -48,12 +56,22 @@ public class AdminViewController {
                     MovieRecord newValue) {
                 System.out.println("ListView selection changed from oldValue = "
                         + oldValue + " to newValue = " + newValue);
+                selectedMovie = (MovieRecord) newValue;
+            }
+        });
+        listUsers.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue,
+                    Object newValue) {
+                System.out.println("ListView selection changed from oldValue = "
+                        + oldValue + " to newValue = " + newValue);
+                selectedUser = (UserView) newValue;
             }
         });
     }
 
     @FXML
-    private void onNew() throws IOException {
+    private void onNewMovie() throws IOException {
         listMovies.getSelectionModel().clearSelection();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieForm.fxml"));
         Parent novaTelaRoot = loader.load();
@@ -62,7 +80,15 @@ public class AdminViewController {
     }
 
     @FXML
-    private void onEdit() throws IOException {
+    private void onEditMovie() throws IOException {
+        if(selectedMovie == null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Nenhum filme selecionado");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um filme para editar.");
+            alert.showAndWait();
+            return;
+        }
         System.out.println("Chegou");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieForm.fxml"));
         Parent novaTelaRoot = loader.load();
@@ -72,7 +98,7 @@ public class AdminViewController {
         stage.setScene(new Scene(novaTelaRoot));
     }
     @FXML
-    private void onDelete() {
+    private void onDeleteMovie() {
         MovieRecord selectedMovie = listMovies.getSelectionModel().getSelectedItem();
         if (selectedMovie != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -125,7 +151,43 @@ public class AdminViewController {
 
         }
     }
+    @FXML
+    private void onEditUser(){
+        if(selectedUser == null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Nenhum usuário selecionado");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um usuário para editar.");
+            alert.showAndWait();
+            return;
+        }
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/UserEditView.fxml"));
+        Parent novaTelaRoot;
+        try {
+            novaTelaRoot = loader.load();
+            Stage stage = (Stage) listUsers.getScene().getWindow();
+            stage.setUserData(listUsers.getSelectionModel().getSelectedItem());
+            stage.setScene(new Scene(novaTelaRoot));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
+    }
+    @FXML
+    private void onDeleteUser(){
+
+    }
+    private void loadUsers() {
+        listUsers.getItems().clear();
+        try {
+            var users = SessionManager.getInstance().getUserClientService().getAll();
+            listUsers.getItems().addAll(users.usuarios());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     private void loadMovies() {
         listMovies.getItems().clear();
         try {
