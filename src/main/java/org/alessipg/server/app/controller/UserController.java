@@ -2,6 +2,7 @@ package org.alessipg.server.app.controller;
 
 import org.alessipg.server.app.service.UserService;
 import org.alessipg.shared.dto.response.StatusResponse;
+import org.alessipg.shared.dto.response.UserGetAllResponse;
 import org.alessipg.shared.dto.response.UserSelfGetResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -15,7 +16,7 @@ public class UserController {
         this.userService = usuarioService;
         this.gson = gson;
     }
-
+    // TODO: checar nessa e em todas as classes se existe a chave json antes de ler
     public String create(JsonObject json) {
         UserRecord user = gson.fromJson(json.get("usuario"), UserRecord.class);
         if (user == null)
@@ -43,9 +44,26 @@ public class UserController {
     }
 
     public String selfDelete(JsonObject json) {
-        String token = json.get("token").getAsString();
+        String token = json.has("token") ? json.get("token").getAsString() : "";
         StatusResponse status = userService.selfDelete(token);
         return gson.toJson(status);
     }
 
+    public String getAll(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : "";
+        UserGetAllResponse status = userService.getAll(token);
+        return gson.toJson(status);
+    }
+
+    public String adminUpdate(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : "";
+        JsonObject usuario = json.get("usuario").getAsJsonObject();
+        String password = usuario.get("senha").getAsString();
+        int userId = json.has("id")? json.get("id").getAsInt() : -1;
+        if(userId == -1){
+            return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
+        }
+        StatusResponse status = userService.adminUpdate(token, userId, password);
+        return gson.toJson(status);
+    }
 }
