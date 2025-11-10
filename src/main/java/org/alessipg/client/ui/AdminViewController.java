@@ -12,11 +12,13 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javafx.beans.value.ChangeListener;
 
 import lombok.Getter;
 import org.alessipg.client.infra.session.SessionManager;
+import org.alessipg.shared.dto.response.UserGetAllResponse;
 import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
@@ -109,42 +111,20 @@ public class AdminViewController {
                     try {
                         StatusTable res = SessionManager.getInstance().getMovieClientService().delete(selectedMovie.id());
                         Alert a = new Alert(null);
-                        switch(res){
-                            case OK:
-                                a.setAlertType(Alert.AlertType.INFORMATION);
-                                a.setContentText("Filme excluído com sucesso!");
-                                a.showAndWait();
-                                break;
-                            case UNAUTHORIZED:
-                                a.setAlertType(Alert.AlertType.ERROR);
-                                a.setContentText("Erro: Usuário não autorizado.");
-                                a.showAndWait();
-                                break;
-                            case NOT_FOUND:
-                                a.setAlertType(Alert.AlertType.ERROR);
-                                a.setContentText("Erro: Filme não encontrado.");
-                                a.showAndWait();
-                                break;
-                            case UNPROCESSABLE_ENTITY:
-                                a.setAlertType(Alert.AlertType.ERROR);
-                                a.setContentText("Erro: Entidade não processável.");
-                                a.showAndWait();
-                                break;
-                            case INTERNAL_SERVER_ERROR:
-                                a.setAlertType(Alert.AlertType.ERROR);
-                                a.setContentText("Erro: Erro interno do servidor.");
-                                a.showAndWait();
-                                break;
-                            default:
-                                a.setAlertType(Alert.AlertType.ERROR);
-                                a.setContentText("Erro: Erro desconhecido.");
-                                a.showAndWait();
-                                break;
+                        if (Objects.requireNonNull(res) == StatusTable.OK) {
+                            a.setAlertType(Alert.AlertType.INFORMATION);
+                            a.setContentText("Filme excluído com sucesso!");
+                            a.showAndWait();
+                        } else {
+                            a.setAlertType(Alert.AlertType.ERROR);
+                            a.setContentText(res.getMessage());
+                            a.showAndWait();
                         }
                         loadMovies();
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        Alert a = new Alert(Alert.AlertType.ERROR);
+                        a.setContentText("Erro ao excluir filme: " + e.getMessage());
+                        a.showAndWait();
                     }
                 }
             });
@@ -215,7 +195,12 @@ public class AdminViewController {
     private void loadUsers() {
         listUsers.getItems().clear();
         try {
-            var users = SessionManager.getInstance().getUserClientService().getAll();
+            UserGetAllResponse users = SessionManager.getInstance().getUserClientService().getAll();
+            if(!users.status().equals("200")){
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar usuários: " + users.status()+": " + users.mensagem());
+                alert.showAndWait();
+                return;
+            }
             listUsers.getItems().addAll(users.usuarios());
         } catch (IOException e) {
             // TODO Auto-generated catch block

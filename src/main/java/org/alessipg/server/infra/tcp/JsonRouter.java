@@ -74,7 +74,7 @@ public class JsonRouter {
                     return UserController.selfDelete(json);
                 case "EXCLUIR_FILME":
                     return MovieController.delete(json);
-                    case "ADMIN_EXCLUIR_USUARIO":
+                case "ADMIN_EXCLUIR_USUARIO":
                     return UserController.adminDelete(json);
                 default:
                     return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));

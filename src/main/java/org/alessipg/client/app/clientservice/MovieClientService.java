@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.server.app.model.Movie;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.request.MovieCreateRequest;
 import org.alessipg.shared.dto.request.MovieDeleteRequest;
@@ -43,6 +44,8 @@ public class MovieClientService {
                     return StatusTable.BAD;
                 case "401":
                     return StatusTable.UNAUTHORIZED;
+                case "403":
+                    return StatusTable.FORBIDDEN;
                 case "409":
                     return StatusTable.ALREADY_EXISTS;
                 case "422":
@@ -63,20 +66,25 @@ public class MovieClientService {
             JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
             String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
             switch (status) {
-                case "200":// TODO: verificar todas as chaves antes de ler porque vai estourar exception
+                case "200":
                     if (!jsonObject.has("filmes")) {
                         return new MovieGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
                     }
                     JsonArray moviesResponse = jsonObject.getAsJsonArray("filmes");
                     List<MovieRecord> movies = new ArrayList<>();
-                    for (JsonElement m : moviesResponse) {// TODO: Throw se não conseguir serializar
-                        movies.add(gson.fromJson(m, MovieRecord.class));
+                    for (JsonElement m : moviesResponse) {
+                        MovieRecord movie = gson.fromJson(m, MovieRecord.class);
+                        if (movie == null)
+                            return new MovieGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
+                        movies.add(movie);
                     }
                     return new MovieGetAllResponse(StatusTable.OK, movies);
                 case "400":
                     return new MovieGetAllResponse(StatusTable.BAD, null);
                 case "401":
                     return new MovieGetAllResponse(StatusTable.UNAUTHORIZED, null);
+                case "403":
+                    return new MovieGetAllResponse(StatusTable.FORBIDDEN, null);
                 case "422":
                     return new MovieGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
                 case "404":
@@ -104,6 +112,8 @@ public class MovieClientService {
                         return StatusTable.BAD;
                     case "401":
                         return StatusTable.UNAUTHORIZED;
+                    case "403":
+                        return StatusTable.FORBIDDEN;
                     case "404":
                         return StatusTable.NOT_FOUND;
                     case "422":
@@ -134,6 +144,8 @@ public class MovieClientService {
                         return StatusTable.BAD;
                     case "401":
                         return StatusTable.UNAUTHORIZED;
+                    case "403":
+                        return StatusTable.FORBIDDEN;
                     case "404":
                         return StatusTable.NOT_FOUND;
                     case "422":

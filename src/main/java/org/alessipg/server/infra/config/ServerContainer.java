@@ -43,7 +43,7 @@ public class ServerContainer implements AutoCloseable {
         // controllers
         Gson gson = Jsons.get();
         this.userController = new UserController(userService, gson);
-        this.movieController = new MovieController(movieService, gson);
+        this.movieController = new MovieController(movieService, gson, authService);
         this.authController = new AuthController(authService, gson);
 
         // Configurar injeção de dependência no JsonRouter

@@ -16,8 +16,10 @@ public class UserController {
         this.userService = usuarioService;
         this.gson = gson;
     }
-    // TODO: checar nessa e em todas as classes se existe a chave json antes de ler
     public String create(JsonObject json) {
+        if(!json.has("usuario")){
+            return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
+        }
         UserRecord user = gson.fromJson(json.get("usuario"), UserRecord.class);
         if (user == null)
             return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
@@ -36,7 +38,13 @@ public class UserController {
     }
 
     public String update(JsonObject json) {
+        if(!json.has("usuario") || !json.has("token")){
+            return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
+        }
         JsonObject usuario = json.get("usuario").getAsJsonObject();
+        if(!usuario.has("senha")){
+            return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
+        }
         String password = usuario.get("senha").getAsString();
         String token = json.get("token").getAsString();
         StatusResponse status = userService.update(token, password);

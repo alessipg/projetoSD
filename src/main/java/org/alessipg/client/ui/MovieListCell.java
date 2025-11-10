@@ -10,19 +10,23 @@ import javafx.scene.layout.VBox;
 
 public class MovieListCell extends ListCell<MovieRecord> {
     private VBox vbox = new VBox(5);
-    private Label lblTitulo = new Label();
+    private Label lblTitle = new Label();
     private Label lblInfo = new Label();
-    private Label lblNota = new Label();
+    private Label lblScore = new Label();
+    private Label lblSynopsis = new Label();
 
     public MovieListCell() {
-        lblTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        lblTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         lblInfo.setStyle("-fx-text-fill: gray;");
         this.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
             lblInfo.setStyle(isNowSelected ? "-fx-text-fill: white;" : "-fx-text-fill: gray;");
+            lblSynopsis.setStyle(isNowSelected ? "-fx-text-fill: white; -fx-font-style: italic;" : "-fx-text-fill: gray; -fx-font-style: italic;");
         });
-        lblNota.setStyle("-fx-text-fill: #006600; -fx-font-weight: bold;");
+        lblScore.setStyle("-fx-text-fill: #006600; -fx-font-weight: bold;");
+        lblSynopsis.setStyle("-fx-text-fill: gray; -fx-font-style: italic;");
+        lblSynopsis.setWrapText(true);
 
-        vbox.getChildren().addAll(lblTitulo, lblInfo, lblNota);
+        vbox.getChildren().addAll(lblTitle, lblInfo, lblScore, lblSynopsis);
 
         HBox.setHgrow(vbox, Priority.ALWAYS);
     }
@@ -35,10 +39,11 @@ public class MovieListCell extends ListCell<MovieRecord> {
             setText(null);
             setGraphic(null);
         } else {
-            lblTitulo.setText(filme.titulo() + " (" + filme.ano() + ")");
+            lblTitle.setText(filme.titulo() + " (" + filme.ano() + ")");
             lblInfo.setText("Diretor: " + filme.diretor() + " | Gêneros: " +
                     String.join(", ", filme.genero().stream().map(Object::toString).toList()));
-            lblNota.setText("Nota: " + filme.nota() + " (" + filme.qtd_avaliacoes() + " avaliações)");
+            lblScore.setText("Nota: " + filme.nota() + " (" + filme.qtd_avaliacoes() + " avaliações)");
+            lblSynopsis.setText(filme.sinopse() != null ? filme.sinopse() : "");
             setGraphic(vbox);
         }
     }

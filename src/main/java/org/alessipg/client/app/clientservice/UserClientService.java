@@ -123,14 +123,20 @@ public class UserClientService {
                                 StatusTable.UNPROCESSABLE_ENTITY.getMessage(), null);
                     JsonArray usersResponse = jsonObject.getAsJsonArray("usuarios");
                     List<UserView> users = new ArrayList<>();
-                    for (JsonElement m : usersResponse) {// TODO: Throw se não conseguir serializar
-                        users.add(gson.fromJson(m, UserView.class));
+                    for (JsonElement m : usersResponse) {
+                        UserView user = gson.fromJson(m, UserView.class);
+                        if (user == null)
+                            return new UserGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY,
+                                    StatusTable.UNPROCESSABLE_ENTITY.getMessage(), null);
+                        users.add(user);
                     }
                     return new UserGetAllResponse(StatusTable.OK, StatusTable.OK.getMessage(), users);
                 case "400":
                     return new UserGetAllResponse(StatusTable.BAD, StatusTable.BAD.getMessage(), null);
                 case "401":
                     return new UserGetAllResponse(StatusTable.UNAUTHORIZED, StatusTable.UNAUTHORIZED.getMessage(), null);
+                case "403":
+                    return new UserGetAllResponse(StatusTable.FORBIDDEN, StatusTable.FORBIDDEN.getMessage(), null);
                 case "422":
                     return new UserGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, StatusTable.BAD.getMessage(), null);
                 case "404":
@@ -167,7 +173,7 @@ public class UserClientService {
     }
 
     public StatusTable adminDeleteUser(String id) throws IOException {
-        AdminDeleteUserRequest msg = new AdminDeleteUserRequest(id,SessionManager.getInstance().getToken());
+        AdminDeleteUserRequest msg = new AdminDeleteUserRequest(id, SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
