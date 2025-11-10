@@ -1,7 +1,7 @@
 package org.alessipg.server.infra.repo;
 
 import org.alessipg.server.infra.config.Jpa;
-import org.alessipg.shared.domain.model.User;
+import org.alessipg.server.app.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.NoResultException;

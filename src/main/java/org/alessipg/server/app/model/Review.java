@@ -1,4 +1,4 @@
-package org.alessipg.shared.domain.model;
+package org.alessipg.server.app.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

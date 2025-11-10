@@ -55,7 +55,7 @@ public class MovieClientService {
     }
 
     public MovieGetAllResponse getAll() throws IOException {
-        MovieGetAllRequest msg = new MovieGetAllRequest();
+        MovieGetAllRequest msg = new MovieGetAllRequest(SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();

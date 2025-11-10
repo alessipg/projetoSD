@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import org.alessipg.client.infra.session.SessionManager;
-import org.alessipg.shared.domain.model.User;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.util.UserView;
 

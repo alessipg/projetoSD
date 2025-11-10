@@ -1,7 +1,7 @@
 package org.alessipg.server.app.service;
 
 import org.alessipg.server.infra.repo.DataAccessException;
-import org.alessipg.shared.domain.model.User;
+import org.alessipg.server.app.model.User;
 import org.alessipg.shared.dto.response.UserGetAllResponse;
 import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
@@ -147,6 +147,24 @@ public class UserService {
             User user = optUser.get();
             user.setPassword(password);
             persist(user);
+            return new StatusResponse(StatusTable.OK);
+        }catch(Exception e){
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public StatusResponse adminDelete(String token, int userId) {
+        try{
+            String funcao = JwtUtil.validarToken(token)
+                    .getClaim("funcao").asString();
+            if (!funcao.equals("admin"))
+                return new StatusResponse(StatusTable.FORBIDDEN);
+            Optional<User> optUser= userRepository.findById(userId);
+            if(optUser.isEmpty())
+                return new StatusResponse(StatusTable.NOT_FOUND);
+            User user = optUser.get();
+            userRepository.delete(user);
+            ServerView.removeUser(user.getName());
             return new StatusResponse(StatusTable.OK);
         }catch(Exception e){
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);

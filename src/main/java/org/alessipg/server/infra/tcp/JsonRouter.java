@@ -74,8 +74,10 @@ public class JsonRouter {
                     return UserController.selfDelete(json);
                 case "EXCLUIR_FILME":
                     return MovieController.delete(json);
+                    case "ADMIN_EXCLUIR_USUARIO":
+                    return UserController.adminDelete(json);
                 default:
-                    return null;
+                    return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
             }
         } catch (JsonSyntaxException e) {
             System.err.println("Invalid JSON format: " + e.getMessage());
