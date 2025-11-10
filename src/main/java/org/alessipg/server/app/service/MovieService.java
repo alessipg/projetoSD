@@ -18,17 +18,17 @@ public class MovieService {
     public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
-    //TODO: criar e update não estão retornando mensagens de erro caso falhe, caso em sala: generos fora do padrão
+
     public StatusResponse create(MovieCreateDto movieRecord) {
         try {
-        Movie movie = new Movie(
-                movieRecord.titulo(),
-                movieRecord.diretor(),
-                Integer.parseInt(movieRecord.ano()),
-                mapGenres(movieRecord.genero()),
-                movieRecord.sinopse(),
-                0,
-                0.0f);
+            Movie movie = new Movie(
+                    movieRecord.titulo(),
+                    movieRecord.diretor(),
+                    Integer.parseInt(movieRecord.ano()),
+                    mapGenres(movieRecord.genero()),
+                    movieRecord.sinopse(),
+                    0,
+                    0.0f);
 
             persist(movie);
             return new StatusResponse(StatusTable.CREATED);
@@ -62,17 +62,20 @@ public class MovieService {
     }
 
     public StatusResponse update(MovieRecord m) {
-        Movie movie = movieRepository.findById(Integer.parseInt(m.id()));
-        if(movie == null)
-            return new StatusResponse(StatusTable.NOT_FOUND);
-        movie.setTitle(m.titulo());
-        movie.setDirector(m.diretor());
-        movie.setYear(Integer.parseInt(m.ano()));
-        movie.setGenres(mapGenres(m.genero()));
-        movie.setSynopsis(m.sinopse());
         try {
+            Movie movie = movieRepository.findById(Integer.parseInt(m.id()));
+            if (movie == null)
+                return new StatusResponse(StatusTable.NOT_FOUND);
+            movie.setTitle(m.titulo());
+            movie.setDirector(m.diretor());
+            movie.setYear(Integer.parseInt(m.ano()));
+            movie.setGenres(mapGenres(m.genero()));
+            movie.setSynopsis(m.sinopse());
+
             persist(movie);
             return new StatusResponse(StatusTable.OK);
+        } catch (IllegalArgumentException e) {
+            return new StatusResponse(StatusTable.INVALID_INPUT);
         } catch (Exception e) {
             return new StatusResponse(StatusTable.BAD);
         }
@@ -81,7 +84,7 @@ public class MovieService {
     List<Genre> mapGenres(List<String> genres) throws IllegalArgumentException {
         try {
             List<Genre> mappedGenres = new ArrayList<>();
-            for (String g : genres){
+            for (String g : genres) {
                 mappedGenres.add(Genre.from(g));
             }
             return mappedGenres;

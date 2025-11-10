@@ -18,7 +18,6 @@ import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MoviesViewController {
-    // TODO: Change all class names to english
     @FXML
     private ListView<MovieRecord> listMovies;
 
@@ -36,10 +35,14 @@ public class MoviesViewController {
             MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
             switch (movies.status()) {
                 case "200":
-                    listMovies.getItems().addAll(movies.filmes());
+                    if (movies.filmes().size() == 0) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Nenhum filme disponível no momento.");
+                        alert.showAndWait();
+                    } else
+                        listMovies.getItems().addAll(movies.filmes());
                     break;
                 default:
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status()+": " + movies.mensagem());
                     alert.showAndWait();
             }
         } catch (Exception e) {
