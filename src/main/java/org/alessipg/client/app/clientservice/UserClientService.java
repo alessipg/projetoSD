@@ -165,4 +165,26 @@ public class UserClientService {
         }
         return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
     }
+
+    public StatusTable adminDeleteUser(String id) throws IOException {
+        AdminDeleteUserRequest msg = new AdminDeleteUserRequest(id,SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            return switch (status) {
+                case "200" -> StatusTable.OK;
+                case "400" -> StatusTable.BAD;
+                case "401" -> StatusTable.UNAUTHORIZED;
+                case "403" -> StatusTable.FORBIDDEN;
+                case "404" -> StatusTable.NOT_FOUND;
+                case "405" -> StatusTable.INVALID_INPUT;
+                case "422" -> StatusTable.UNPROCESSABLE_ENTITY;
+                default -> StatusTable.INTERNAL_SERVER_ERROR;
+            };
+        }
+        return StatusTable.INTERNAL_SERVER_ERROR;
+    }
 }

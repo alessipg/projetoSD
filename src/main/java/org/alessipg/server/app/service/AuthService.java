@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.alessipg.server.ui.ServerView;
 import org.alessipg.server.util.JwtUtil;
-import org.alessipg.shared.domain.model.User;
+import org.alessipg.server.app.model.User;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.response.UserLoginResponse;

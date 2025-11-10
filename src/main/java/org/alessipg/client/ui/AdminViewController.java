@@ -176,7 +176,41 @@ public class AdminViewController {
     }
     @FXML
     private void onDeleteUser(){
-
+        if(selectedUser == null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Nenhum usuário selecionado");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um usuário para deletar.");
+            alert.showAndWait();
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar Deleção");
+        alert.setHeaderText("Você tem certeza que deseja excluir o usuário: " + selectedUser.nome() + "?");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == javafx.scene.control.ButtonType.OK) {
+                try {
+                    StatusTable res = SessionManager.getInstance().getUserClientService().adminDeleteUser(selectedUser.id());
+                    Alert a = new Alert(null);
+                    switch (res) {
+                        case OK:
+                            a.setAlertType(Alert.AlertType.INFORMATION);
+                            a.setContentText("Usuário excluído com sucesso!");
+                            a.showAndWait();
+                            loadUsers();
+                            break;
+                        default:
+                            a.setAlertType(Alert.AlertType.ERROR);
+                            a.setContentText(res.getMessage());
+                            a.showAndWait();
+                    }
+                } catch (Exception e) {
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.setContentText("Erro ao excluir usuário: " + e.getMessage());
+                    a.showAndWait();
+                }
+            }
+        });
     }
     private void loadUsers() {
         listUsers.getItems().clear();

@@ -6,9 +6,9 @@
              version="2.1">
 
     <persistence-unit name="projeto-sd" transaction-type="RESOURCE_LOCAL">
-        <class>org.alessipg.shared.domain.model.User</class>
-        <class>org.alessipg.shared.domain.model.Movie</class>
-        <class>org.alessipg.shared.domain.model.Review</class>
+        <class>org.alessipg.server.app.model.User</class>
+        <class>org.alessipg.server.app.model.Movie</class>
+        <class>org.alessipg.server.app.model.Review</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:data/projeto-sd.db" />
             <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC" />

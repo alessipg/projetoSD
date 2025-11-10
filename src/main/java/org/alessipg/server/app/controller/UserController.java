@@ -66,4 +66,14 @@ public class UserController {
         StatusResponse status = userService.adminUpdate(token, userId, password);
         return gson.toJson(status);
     }
+
+    public String adminDelete(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : "";
+        int userId = json.has("id")? json.get("id").getAsInt() : -1;
+        if(userId == -1){
+            return gson.toJson(new StatusResponse(org.alessipg.shared.enums.StatusTable.UNPROCESSABLE_ENTITY));
+        }
+        StatusResponse status = userService.adminDelete(token, userId);
+        return gson.toJson(status);
+    }
 }

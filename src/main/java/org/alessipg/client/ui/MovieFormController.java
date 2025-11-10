@@ -133,11 +133,18 @@ public class MovieFormController {
                             tfDirector.setText(movie.diretor());
                             spYear.getValueFactory().setValue(Integer.valueOf(movie.ano()));
                             taSynopsis.setText(movie.sinopse());
-                            for (String genero : movie.genero()) {
-                                CheckBox cb = checkBoxGeneroMap.get(Genre.from(genero));
-                                if (cb != null) {
-                                    cb.setSelected(true);
+                            try {
+                                for (String genero : movie.genero()) {
+                                    CheckBox cb = checkBoxGeneroMap.get(Genre.from(genero));
+                                    if (cb != null) {
+                                        cb.setSelected(true);
+                                    }
                                 }
+                            } catch (IllegalArgumentException e) {
+                                Alert alert = new Alert(AlertType.ERROR);
+                                alert.setHeaderText("Gênero inválido");
+                                alert.setContentText("O filme possui um gênero inválido: " + e.getMessage());
+                                alert.showAndWait();
                             }
                         }
                     }

@@ -60,5 +60,5 @@ If running from IntelliJ IDEA or another IDE, add the following VM options to th
 
 - **Server**: Handles business logic, database operations, and TCP communication
 - **Client**: JavaFX-based GUI application that connects to the server via TCP
-- **Shared**: Common DTOs and domain models used by both client and server
+- **Shared**: Common DTOs used by both client and server
 

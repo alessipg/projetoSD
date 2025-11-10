@@ -3,7 +3,7 @@ package org.alessipg.server.infra.repo;
 import java.util.List;
 
 import org.alessipg.server.infra.config.Jpa;
-import org.alessipg.shared.domain.model.Movie;
+import org.alessipg.server.app.model.Movie;
 import jakarta.persistence.EntityManager;
 
 public class MovieRepository {
