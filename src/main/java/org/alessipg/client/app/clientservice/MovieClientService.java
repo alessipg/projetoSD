@@ -46,6 +46,8 @@ public class MovieClientService {
                     return StatusTable.UNAUTHORIZED;
                 case "403":
                     return StatusTable.FORBIDDEN;
+                case "405":
+                    return StatusTable.INVALID_INPUT;
                 case "409":
                     return StatusTable.ALREADY_EXISTS;
                 case "422":
@@ -83,8 +85,6 @@ public class MovieClientService {
                     return new MovieGetAllResponse(StatusTable.BAD, null);
                 case "401":
                     return new MovieGetAllResponse(StatusTable.UNAUTHORIZED, null);
-                case "403":
-                    return new MovieGetAllResponse(StatusTable.FORBIDDEN, null);
                 case "422":
                     return new MovieGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, null);
                 case "404":
@@ -93,7 +93,7 @@ public class MovieClientService {
                     return new MovieGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
             }
         }
-        return null;
+        return new MovieGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
     }
 
     public StatusTable edit(MovieRecord movie) {
@@ -105,25 +105,20 @@ public class MovieClientService {
             if (response != null) {
                 JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
                 String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
-                switch (status) {
-                    case "200":
-                        return StatusTable.OK;
-                    case "400":
-                        return StatusTable.BAD;
-                    case "401":
-                        return StatusTable.UNAUTHORIZED;
-                    case "403":
-                        return StatusTable.FORBIDDEN;
-                    case "404":
-                        return StatusTable.NOT_FOUND;
-                    case "422":
-                        return StatusTable.UNPROCESSABLE_ENTITY;
-                    default:
-                        return StatusTable.INTERNAL_SERVER_ERROR;
-                }
+                return switch (status) {
+                    case "200" -> StatusTable.OK;
+                    case "400" -> StatusTable.BAD;
+                    case "401" -> StatusTable.UNAUTHORIZED;
+                    case "403" -> StatusTable.FORBIDDEN;
+                    case "404" -> StatusTable.NOT_FOUND;
+                    case "405" -> StatusTable.INVALID_INPUT;
+                    case "409" -> StatusTable.ALREADY_EXISTS;
+                    case "422" -> StatusTable.UNPROCESSABLE_ENTITY;
+                    default -> StatusTable.INTERNAL_SERVER_ERROR;
+                };
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            return StatusTable.INTERNAL_SERVER_ERROR;
         }
         return null;
     }
@@ -137,25 +132,18 @@ public class MovieClientService {
             if (response != null) {
                 JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
                 String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
-                switch (status) {
-                    case "200":
-                        return StatusTable.OK;
-                    case "400":
-                        return StatusTable.BAD;
-                    case "401":
-                        return StatusTable.UNAUTHORIZED;
-                    case "403":
-                        return StatusTable.FORBIDDEN;
-                    case "404":
-                        return StatusTable.NOT_FOUND;
-                    case "422":
-                        return StatusTable.UNPROCESSABLE_ENTITY;
-                    default:
-                        return StatusTable.INTERNAL_SERVER_ERROR;
-                }
+                return switch (status) {
+                    case "200" -> StatusTable.OK;
+                    case "400" -> StatusTable.BAD;
+                    case "401" -> StatusTable.UNAUTHORIZED;
+                    case "403" -> StatusTable.FORBIDDEN;
+                    case "404" -> StatusTable.NOT_FOUND;
+                    case "422" -> StatusTable.UNPROCESSABLE_ENTITY;
+                    default -> StatusTable.INTERNAL_SERVER_ERROR;
+                };
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            return StatusTable.INTERNAL_SERVER_ERROR;
         }
         return null;
     }

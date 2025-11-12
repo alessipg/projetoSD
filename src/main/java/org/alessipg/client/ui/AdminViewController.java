@@ -91,7 +91,6 @@ public class AdminViewController {
             alert.showAndWait();
             return;
         }
-        System.out.println("Chegou");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieForm.fxml"));
         Parent novaTelaRoot = loader.load();
         Stage stage = (Stage) listMovies.getScene().getWindow();

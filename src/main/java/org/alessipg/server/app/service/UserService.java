@@ -100,6 +100,8 @@ public class UserService {
             if (optUser.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
             User user = optUser.get();
+            if(user.getName().equals("admin"))
+                return new StatusResponse(StatusTable.FORBIDDEN);
             userRepository.delete(user);
             ServerView.removeUser(user.getName());
             return new StatusResponse(StatusTable.OK);
@@ -163,6 +165,8 @@ public class UserService {
             if(optUser.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
             User user = optUser.get();
+            if(user.getName().equals("admin"))
+                return new StatusResponse(StatusTable.FORBIDDEN);
             userRepository.delete(user);
             ServerView.removeUser(user.getName());
             return new StatusResponse(StatusTable.OK);
