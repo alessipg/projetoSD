@@ -57,6 +57,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>

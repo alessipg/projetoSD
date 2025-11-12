@@ -55,7 +55,7 @@ public class MovieFormController {
         // Associa cada CheckBox ao seu Genero
         for (Node node : gridGenre.getChildren()) {
             if (node instanceof CheckBox checkBox) {
-                // Use o método getDisplayName para comparar
+                // Use o métod getDisplayName para comparar
                 for (Genre genero : Genre.values()) {
                     if (genero.toString().equals(checkBox.getText())) {
                         checkBoxGeneroMap.put(genero, checkBox);
@@ -133,11 +133,18 @@ public class MovieFormController {
                             tfDirector.setText(movie.diretor());
                             spYear.getValueFactory().setValue(Integer.valueOf(movie.ano()));
                             taSynopsis.setText(movie.sinopse());
-                            for (String genero : movie.genero()) {
-                                CheckBox cb = checkBoxGeneroMap.get(Genre.from(genero));
-                                if (cb != null) {
-                                    cb.setSelected(true);
+                            try {
+                                for (String genero : movie.genero()) {
+                                    CheckBox cb = checkBoxGeneroMap.get(Genre.from(genero));
+                                    if (cb != null) {
+                                        cb.setSelected(true);
+                                    }
                                 }
+                            } catch (IllegalArgumentException e) {
+                                Alert alert = new Alert(AlertType.ERROR);
+                                alert.setHeaderText("Gênero inválido");
+                                alert.setContentText("O filme possui um gênero inválido: " + e.getMessage());
+                                alert.showAndWait();
                             }
                         }
                     }
@@ -186,45 +193,16 @@ public class MovieFormController {
             Alert alert = new Alert(null);
             switch (res) {
                 case OK:
-                    alert.setAlertType(AlertType.INFORMATION);
-                    alert.setHeaderText("Sucesso");
-                    alert.setContentText("Filme editado com sucesso");
-                    alert.showAndWait();
-                    break;
                 case CREATED:
                     alert.setAlertType(AlertType.INFORMATION);
-                    alert.setHeaderText(null);
-                    alert.setContentText(null);
-                    alert.showAndWait();
-                    break;
-                case BAD:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setHeaderText("Erro");
-                    alert.setContentText("Algo deu errado");
-                    alert.showAndWait();
-                    break;
-                case UNAUTHORIZED:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setHeaderText("Não autorizado");
-                    alert.setContentText("Você não está logado");
-                    alert.showAndWait();
-                    break;
-                case ALREADY_EXISTS:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setHeaderText("Já criado");
-                    alert.setContentText("O filme " + tfTitle.getText() + " já existe.");
-                    alert.showAndWait();
-                    break;
-                case UNPROCESSABLE_ENTITY:
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setHeaderText("Mensagem incorreta");
-                    alert.setContentText("Servidor enviou uma mensagem fora dos padrões");
+                    alert.setHeaderText("Sucesso");
+                    alert.setContentText("Operação realizada com sucesso.");
                     alert.showAndWait();
                     break;
                 default:
                     alert.setAlertType(AlertType.ERROR);
-                    alert.setHeaderText("Erro interno");
-                    alert.setContentText("Um erro inesperado ocorreu.");
+                    alert.setHeaderText("Erro");
+                    alert.setContentText(res.getMessage());
                     alert.showAndWait();
                     break;
             }

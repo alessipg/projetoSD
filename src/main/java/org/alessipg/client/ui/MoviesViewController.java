@@ -18,7 +18,6 @@ import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 
 public class MoviesViewController {
-    // TODO: Change all class names to english
     @FXML
     private ListView<MovieRecord> listMovies;
 
@@ -31,24 +30,50 @@ public class MoviesViewController {
                 return new MovieListCell();
             }
         });
-
+        listMovies.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                MovieRecord selectedMovie = listMovies.getSelectionModel().getSelectedItem();
+                if (selectedMovie != null) {
+                    try {
+                        openMovieDetailsWindow(selectedMovie);
+                    } catch (IOException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao abrir detalhes do filme: " + e.getMessage());
+                        alert.showAndWait();
+                    }
+                }
+            }
+        });
         try {
-            //MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
-            MovieGetAllResponse movies = new MovieGetAllResponse(StatusTable.BAD,null);
+            MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
             switch (movies.status()) {
                 case "200":
-                    listMovies.getItems().addAll(movies.filmes());
+                    if (movies.filmes().size() == 0) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Nenhum filme disponível no momento.");
+                        alert.showAndWait();
+                    } else
+                        listMovies.getItems().addAll(movies.filmes());
                     break;
                 default:
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status()+": " + movies.mensagem());
                     alert.showAndWait();
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + e.getMessage());
+            alert.showAndWait();
         }
     }
+    private void openMovieDetailsWindow(MovieRecord movie) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieInfoView.fxml"));
+        Parent movieDetailsRoot = loader.load();
 
+        // Passa o filme selecionado para o controller da nova janela
+
+        Stage stage = new Stage();
+        stage.setUserData(movie);
+        stage.setScene(new Scene(movieDetailsRoot));
+        stage.setTitle("Detalhes do Filme");
+        stage.show();
+    }
     @FXML
     private void onMyAccount() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/ProfileView.fxml"));

@@ -19,9 +19,9 @@ public class TcpServer {
     this.connectionListener = listener;
   }
 
-  private int port;
+  private final int port;
   private boolean running = false;
-  private ExecutorService threadPool;
+  private final ExecutorService threadPool;
 
   public TcpServer(int port) {
     this.port = port;

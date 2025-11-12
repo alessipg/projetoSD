@@ -4,11 +4,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.AdminViewController">
@@ -22,9 +18,9 @@
                <left>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="btnNew" mnemonicParsing="false" onAction="#onNew" prefWidth="80.0" text="Novo" />
-                        <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#onEdit" prefWidth="80.0" text="Editar" />
-                        <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#onDelete" prefWidth="80.0" text="Excluir" />
+                        <Button fx:id="btnNewMovie" mnemonicParsing="false" onAction="#onNewMovie" prefWidth="80.0" text="Novo" />
+                        <Button fx:id="btnEditMovie" mnemonicParsing="false" onAction="#onEditMovie" prefWidth="80.0" text="Editar" />
+                        <Button fx:id="btnDeleteMovie" mnemonicParsing="false" onAction="#onDeleteMovie" prefWidth="80.0" text="Excluir" />
                         <Button fx:id="btnBack" maxWidth="80.0" mnemonicParsing="false" onAction="#onBack" text="Voltar" />
                      </children>
                   </VBox>
@@ -33,23 +29,22 @@
          </content>
     </Tab>
     <Tab text="Usuários">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <children>
-            <GridPane layoutX="1.0" layoutY="-1.0" prefHeight="338.0" prefWidth="600.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-          </children>
-        </AnchorPane>
-      </content>
+         <content>
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <ListView fx:id="listUsers" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
+               <left>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="btnEditUser" mnemonicParsing="false" onAction="#onEditUser" prefWidth="80.0" text="Editar" />
+                        <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#onDeleteUser" prefWidth="80.0" text="Excluir" />
+                        <Button fx:id="btnBack1" maxWidth="80.0" mnemonicParsing="false" onAction="#onBack" text="Voltar" />
+                     </children>
+                  </VBox>
+               </left>
+            </BorderPane>
+         </content>
     </Tab>
   </tabs>
 </TabPane>

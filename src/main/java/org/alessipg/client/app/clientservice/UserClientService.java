@@ -1,20 +1,19 @@
 package org.alessipg.client.app.clientservice;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
+import org.alessipg.shared.dto.request.*;
+import org.alessipg.shared.dto.response.UserGetAllResponse;
+import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.dto.request.UserDeleteRequest;
-import org.alessipg.shared.dto.request.UserCreateRequest;
-import org.alessipg.shared.dto.request.UserSelfGetRequest;
-import org.alessipg.shared.dto.request.UserUpdateRequest;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.response.UserSelfGetResponse;
 import org.alessipg.shared.dto.util.UserRecord;
-
-import com.google.gson.Gson;
 
 public class UserClientService {
 
@@ -41,7 +40,7 @@ public class UserClientService {
             } else {
                 return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
     }
@@ -50,27 +49,27 @@ public class UserClientService {
         String token = SessionManager.getInstance().getToken();
         UserSelfGetRequest msg = new UserSelfGetRequest(token);
         String json = gson.toJson(msg);
-    
+
         client.send(json);
         String response = client.receive();
         if (response == null) {
             return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
         }
-        try{
+        try {
             UserSelfGetResponse res = gson.fromJson(response, UserSelfGetResponse.class);
             if (res != null) {
                 return res;
             } else {
                 return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new UserSelfGetResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
         }
     }
 
     public StatusResponse update(String newPassword) throws IOException {
-        UserRecord user = new UserRecord(null,newPassword);
-        UserUpdateRequest msg = new UserUpdateRequest(user,SessionManager.getInstance().getToken());
+        UserRecord user = new UserRecord(null, newPassword);
+        UserUpdateRequest msg = new UserUpdateRequest(user, SessionManager.getInstance().getToken());
         String json = gson.toJson(msg);
         client.send(json);
         String response = client.receive();
@@ -107,5 +106,91 @@ public class UserClientService {
         } catch (JsonSyntaxException e) {
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public UserGetAllResponse getAll() throws IOException {
+        UserGetAllRequest msg = new UserGetAllRequest(SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            switch (status) {
+                case "200":
+                    if (!jsonObject.has("usuarios"))
+                        return new UserGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY,
+                                StatusTable.UNPROCESSABLE_ENTITY.getMessage(), null);
+                    JsonArray usersResponse = jsonObject.getAsJsonArray("usuarios");
+                    List<UserView> users = new ArrayList<>();
+                    for (JsonElement m : usersResponse) {
+                        UserView user = gson.fromJson(m, UserView.class);
+                        if (user == null)
+                            return new UserGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY,
+                                    StatusTable.UNPROCESSABLE_ENTITY.getMessage(), null);
+                        users.add(user);
+                    }
+                    return new UserGetAllResponse(StatusTable.OK, StatusTable.OK.getMessage(), users);
+                case "400":
+                    return new UserGetAllResponse(StatusTable.BAD, StatusTable.BAD.getMessage(), null);
+                case "401":
+                    return new UserGetAllResponse(StatusTable.UNAUTHORIZED, StatusTable.UNAUTHORIZED.getMessage(), null);
+                case "403":
+                    return new UserGetAllResponse(StatusTable.FORBIDDEN, StatusTable.FORBIDDEN.getMessage(), null);
+                case "422":
+                    return new UserGetAllResponse(StatusTable.UNPROCESSABLE_ENTITY, StatusTable.BAD.getMessage(), null);
+                case "404":
+                    return new UserGetAllResponse(StatusTable.NOT_FOUND, StatusTable.NOT_FOUND.getMessage(), null);
+                default:
+                    return new UserGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR,
+                            StatusTable.INTERNAL_SERVER_ERROR.getMessage(), null);
+            }
+        }
+        return new UserGetAllResponse(StatusTable.INTERNAL_SERVER_ERROR, StatusTable.INTERNAL_SERVER_ERROR.getMessage(), null);
+
+    }
+
+    public StatusResponse adminUpdateUser(String newPass, String id) throws IOException {
+        AdminUpdateUserRequest msg = new AdminUpdateUserRequest(newPass, SessionManager.getInstance().getToken(), id);
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            return switch (status) {
+                case "200" -> new StatusResponse(StatusTable.OK);
+                case "400" -> new StatusResponse(StatusTable.BAD);
+                case "401" -> new StatusResponse(StatusTable.UNAUTHORIZED);
+                case "403" -> new StatusResponse(StatusTable.FORBIDDEN);
+                case "404" -> new StatusResponse(StatusTable.NOT_FOUND);
+                case "405" -> new StatusResponse(StatusTable.INVALID_INPUT);
+                case "422" -> new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY);
+                default -> new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+            };
+        }
+        return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+    }
+
+    public StatusTable adminDeleteUser(String id) throws IOException {
+        AdminDeleteUserRequest msg = new AdminDeleteUserRequest(id, SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        client.send(json);
+        String response = client.receive();
+        if (response != null) {
+            JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+            String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+            return switch (status) {
+                case "200" -> StatusTable.OK;
+                case "400" -> StatusTable.BAD;
+                case "401" -> StatusTable.UNAUTHORIZED;
+                case "403" -> StatusTable.FORBIDDEN;
+                case "404" -> StatusTable.NOT_FOUND;
+                case "405" -> StatusTable.INVALID_INPUT;
+                case "422" -> StatusTable.UNPROCESSABLE_ENTITY;
+                default -> StatusTable.INTERNAL_SERVER_ERROR;
+            };
+        }
+        return StatusTable.INTERNAL_SERVER_ERROR;
     }
 }

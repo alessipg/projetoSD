@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 public class TcpClient {
@@ -34,8 +35,8 @@ public class TcpClient {
 
     public void setupStreams() throws IOException {
         this.in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream(), "UTF-8"));
-        this.out = new PrintWriter(socket.getOutputStream(), true, Charset.forName("UTF-8"));
+                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+        this.out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
 
         }
 
@@ -52,7 +53,6 @@ public class TcpClient {
     }
 
     public String receive() throws IOException {
-        // Prefer a single line per message if the server sends newline-terminated JSON
         String line = in.readLine();
         if (line == null) {
             return null;

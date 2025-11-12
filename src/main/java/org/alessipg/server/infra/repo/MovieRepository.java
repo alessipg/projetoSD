@@ -1,9 +1,10 @@
 package org.alessipg.server.infra.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.alessipg.server.infra.config.Jpa;
-import org.alessipg.shared.domain.model.Movie;
+import org.alessipg.server.app.model.Movie;
 import jakarta.persistence.EntityManager;
 
 public class MovieRepository {
@@ -28,7 +29,7 @@ public class MovieRepository {
             em.close();
         }
     }
-    // TODO:Returning Enum instead token
+    // TODO:Returning Enum instead token (??)
     public List<Movie> getAll() {
         EntityManager em = Jpa.getEntityManager();
         try {
@@ -40,7 +41,19 @@ public class MovieRepository {
             em.close();
         }
     }
-
+    public Optional<Movie> findByTitleDirectorYear(String title, String director, int year) {
+        try (EntityManager em = Jpa.getEntityManager()) {
+            List<Movie> results = em.createQuery(
+                            "SELECT m FROM Movie m WHERE m.title = :title AND m.director = :director AND m.year = :year",
+                            Movie.class
+                    )
+                    .setParameter("title", title)
+                    .setParameter("director", director)
+                    .setParameter("year", year)
+                    .getResultList();
+            return results.stream().findFirst();
+        }
+    }
     public Movie findById(int id) {
         EntityManager em = Jpa.getEntityManager();
         try {
