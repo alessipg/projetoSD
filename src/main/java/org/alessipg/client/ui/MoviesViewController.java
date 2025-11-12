@@ -30,7 +30,19 @@ public class MoviesViewController {
                 return new MovieListCell();
             }
         });
-
+        listMovies.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                MovieRecord selectedMovie = listMovies.getSelectionModel().getSelectedItem();
+                if (selectedMovie != null) {
+                    try {
+                        openMovieDetailsWindow(selectedMovie);
+                    } catch (IOException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao abrir detalhes do filme: " + e.getMessage());
+                        alert.showAndWait();
+                    }
+                }
+            }
+        });
         try {
             MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
             switch (movies.status()) {
@@ -50,7 +62,18 @@ public class MoviesViewController {
             alert.showAndWait();
         }
     }
+    private void openMovieDetailsWindow(MovieRecord movie) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieInfoView.fxml"));
+        Parent movieDetailsRoot = loader.load();
 
+        // Passa o filme selecionado para o controller da nova janela
+
+        Stage stage = new Stage();
+        stage.setUserData(movie);
+        stage.setScene(new Scene(movieDetailsRoot));
+        stage.setTitle("Detalhes do Filme");
+        stage.show();
+    }
     @FXML
     private void onMyAccount() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/ProfileView.fxml"));
