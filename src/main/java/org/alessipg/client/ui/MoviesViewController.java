@@ -64,15 +64,10 @@ public class MoviesViewController {
     }
     private void openMovieDetailsWindow(MovieRecord movie) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieInfoView.fxml"));
-        Parent movieDetailsRoot = loader.load();
-
-        // Passa o filme selecionado para o controller da nova janela
-
-        Stage stage = new Stage();
+        Parent novaTelaRoot = loader.load();
+        Stage stage = (Stage) listMovies.getScene().getWindow();
         stage.setUserData(movie);
-        stage.setScene(new Scene(movieDetailsRoot));
-        stage.setTitle("Detalhes do Filme");
-        stage.show();
+        stage.setScene(new Scene(novaTelaRoot));
     }
     @FXML
     private void onMyAccount() throws IOException {

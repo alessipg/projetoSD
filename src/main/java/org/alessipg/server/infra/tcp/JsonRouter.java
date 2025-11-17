@@ -58,6 +58,8 @@ public class JsonRouter {
                 // Read
                 case "LISTAR_FILMES":
                     return MovieController.getAll();
+                case "BUSCAR_FILME_ID":
+                    return MovieController.getById(json);
                 case "LISTAR_USUARIOS":
                     return UserController.getAll(json);
                 case "LISTAR_PROPRIO_USUARIO":
