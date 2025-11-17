@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.alessipg.server.infra.repo.MovieRepository;
 import org.alessipg.server.app.model.Movie;
+import org.alessipg.shared.dto.response.MovieGetByIdResponse;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
@@ -61,7 +63,8 @@ public class MovieService {
                             m.getGenres(),
                             m.getScore(),
                             m.getRatingCount(),
-                            m.getSynopsis()));
+                            m.getSynopsis(),
+                            null));
         }
 
         return new MovieGetAllResponse(StatusTable.OK, formmatedMovies);
@@ -158,5 +161,24 @@ public class MovieService {
 
     private String normalizeSynopsis(String sinopse) {
         return sinopse == null ? "" : sinopse; // maintain spaces, already length-validated
+    }
+
+    public MovieGetByIdResponse getById(int id) {
+        System.out.println("Chegou no service com id: " + id);
+        Movie movie = movieRepository.findById(id);
+        if (movie == null) {
+            return new MovieGetByIdResponse(StatusTable.NOT_FOUND, null);
+        }
+        MovieRecord movieRecord = MovieRecord
+                .fromGenres(movie.getId(),
+                        movie.getTitle(),
+                        movie.getDirector(),
+                        movie.getYear(),
+                        movie.getGenres(),
+                        movie.getScore(),
+                        movie.getRatingCount(),
+                        movie.getSynopsis(),
+                        movie.getReviews());
+        return new MovieGetByIdResponse(StatusTable.OK, movieRecord);
     }
 }

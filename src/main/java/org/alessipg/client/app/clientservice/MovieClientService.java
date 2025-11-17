@@ -6,12 +6,8 @@ import java.util.List;
 
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
-import org.alessipg.server.app.model.Movie;
+import org.alessipg.shared.dto.request.*;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.dto.request.MovieCreateRequest;
-import org.alessipg.shared.dto.request.MovieDeleteRequest;
-import org.alessipg.shared.dto.request.MovieUpdateRequest;
-import org.alessipg.shared.dto.request.MovieGetAllRequest;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 
@@ -146,5 +142,29 @@ public class MovieClientService {
             return StatusTable.INTERNAL_SERVER_ERROR;
         }
         return null;
+    }
+
+    public MovieRecord getMovieById(String id) {
+        MovieGetByIdRequest msg = new MovieGetByIdRequest(id, SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        try {
+            client.send(json);
+            String response = client.receive();
+            if (response != null) {
+                JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+                String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+                if (status.equals("200")) {
+                    if (!jsonObject.has("filme")) {
+                        return null;
+                    }
+                    JsonElement movieElement = jsonObject.get("filme");
+                    MovieRecord movie = gson.fromJson(movieElement, MovieRecord.class);
+                    return movie;
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;//todo: melhorar isso
     }
 }

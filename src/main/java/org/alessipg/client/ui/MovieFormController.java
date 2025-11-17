@@ -183,7 +183,8 @@ public class MovieFormController {
                         getGenerosSelecionados().stream().map(Genre::toString).toList(),
                         null,
                         null,
-                        taSynopsis.getText()
+                        taSynopsis.getText(),
+                        null
                 );
                 res = SessionManager.getInstance().getMovieClientService().edit(movie);
             } else {

@@ -1,27 +1,21 @@
 package org.alessipg.server.app.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.NoArgsConstructor;
 import org.alessipg.shared.enums.Genre;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Movie implements Serializable {
 
     @Id
@@ -31,7 +25,7 @@ public class Movie implements Serializable {
     private String title;
     private String director;
     private int year;
-    @ElementCollection(targetClass = Genre.class)
+    @ElementCollection(targetClass = Genre.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "movie_genre", joinColumns = @JoinColumn(name = "movie_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "genre")
@@ -40,6 +34,8 @@ public class Movie implements Serializable {
     private int ratingCount;
     @Column(columnDefinition = "varchar(250)")
     private String synopsis;
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Review> reviews;
 
     public Movie(String title, String director, int year, List<Genre> genres, String synopsis, Integer ratingCount,
             Float score) {
@@ -50,8 +46,5 @@ public class Movie implements Serializable {
         this.ratingCount = (ratingCount != null) ? ratingCount : 0;
         this.synopsis = synopsis;
         this.score = (score != null) ? score : 0f;
-    }
-
-    public Movie() {
     }
 }

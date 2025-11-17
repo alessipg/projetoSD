@@ -1,19 +1,20 @@
 package org.alessipg.server.app.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.ManyToOne;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review implements Serializable {
 
     @Id
@@ -27,20 +28,8 @@ public class Review implements Serializable {
     private String title;
     private String description;
     private Date submitDate;
-
-    public Review(int id, Movie movie, User user, int rating, String title, String description, Date submitDate) {
-        this.id = id;
-        this.movie = movie;
-        this.user = user;
-        this.rating = rating;
-        this.title = title;
-        this.description = description;
-        this.submitDate = submitDate;
-    }
-
-    public Review() {
-
-    }
+    @Column(columnDefinition = "boolean default false")
+    private boolean edited;
 
     public String getFormatedDate() {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
