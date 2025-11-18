@@ -28,7 +28,6 @@ public class Review implements Serializable {
     private String title;
     private String description;
     private Date submitDate;
-    @Column(columnDefinition = "boolean default false")
     private boolean edited;
 
     public String getFormatedDate() {

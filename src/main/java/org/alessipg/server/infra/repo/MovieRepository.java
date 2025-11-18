@@ -9,7 +9,7 @@ import jakarta.persistence.EntityManager;
 
 public class MovieRepository {
 
-    public Movie save(Movie movie) {
+    public void save(Movie movie) {
         EntityManager em = Jpa.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -19,7 +19,6 @@ public class MovieRepository {
                 movie = em.merge(movie);
             }
             em.getTransaction().commit();
-            return movie;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -54,10 +53,10 @@ public class MovieRepository {
             return results.stream().findFirst();
         }
     }
-    public Movie findById(int id) {
+    public Optional<Movie> findById(int id) {
         EntityManager em = Jpa.getEntityManager();
         try {
-            return em.find(Movie.class, id);
+            return Optional.ofNullable(em.find(Movie.class, id));
         } finally {
             em.close();
         }

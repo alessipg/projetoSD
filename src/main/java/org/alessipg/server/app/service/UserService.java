@@ -174,4 +174,8 @@ public class UserService {
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public User getById(int id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }

@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException;
 
 import lombok.Setter;
 
+import org.alessipg.server.app.controller.ReviewController;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.server.app.controller.AuthController;
@@ -24,6 +25,9 @@ public class JsonRouter {
     private static AuthController AuthController;
     @Setter
     private static MovieController MovieController;
+    @Setter
+    private static ReviewController ReviewController;
+
     private static final Gson gson = new GsonBuilder()
             .create();
     // Validar JSON antes de processar
@@ -55,6 +59,8 @@ public class JsonRouter {
                     return UserController.create(json);
                 case "CRIAR_FILME":
                     return MovieController.create(json);
+                case "CRIAR_REVIEW":
+                    return ReviewController.create(json);
                 // Read
                 case "LISTAR_FILMES":
                     return MovieController.getAll();

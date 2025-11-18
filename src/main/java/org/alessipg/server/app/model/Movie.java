@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.NoArgsConstructor;
+import org.alessipg.shared.dto.util.MovieRecord;
 import org.alessipg.shared.enums.Genre;
 
 import lombok.Getter;
@@ -46,5 +47,16 @@ public class Movie implements Serializable {
         this.ratingCount = (ratingCount != null) ? ratingCount : 0;
         this.synopsis = synopsis;
         this.score = (score != null) ? score : 0f;
+    }
+
+    public void updateRating(int newScore) {
+        if(this.ratingCount == 0){
+            this.score = newScore;
+            this.ratingCount = 1;
+            return;
+        }
+        this.score = (this.score * this.ratingCount + newScore) / this.ratingCount+1;
+        this.ratingCount += 1;
+
     }
 }

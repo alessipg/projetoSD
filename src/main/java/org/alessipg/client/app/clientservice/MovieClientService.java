@@ -158,8 +158,7 @@ public class MovieClientService {
                         return null;
                     }
                     JsonElement movieElement = jsonObject.get("filme");
-                    MovieRecord movie = gson.fromJson(movieElement, MovieRecord.class);
-                    return movie;
+                    return gson.fromJson(movieElement, MovieRecord.class);
                 }
             }
         } catch (IOException e) {
