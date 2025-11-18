@@ -2,6 +2,7 @@ package org.alessipg.server.app.controller;
 
 import java.util.List;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.app.service.MovieService;
 import org.alessipg.server.util.JwtUtil;
@@ -81,8 +82,9 @@ public class MovieController {
         String token = json.has("token") ? json.get("token").getAsString() : null;
         if (token == null)
             return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
-        if(!authService.isAdmin(JwtUtil.validarToken(token)))
-            return gson.toJson(new StatusResponse(StatusTable.FORBIDDEN));
+        DecodedJWT decodedJWT= JwtUtil.validarToken(token);
+        if(decodedJWT==null)
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
         if(json.get("id_filme").getAsString().isEmpty())
             return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
 
