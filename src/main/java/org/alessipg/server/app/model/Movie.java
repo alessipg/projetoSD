@@ -49,14 +49,23 @@ public class Movie implements Serializable {
         this.score = (score != null) ? score : 0f;
     }
 
-    public void updateRating(int newScore) {
+    public void updateRating(int newScore, boolean isRemoving) {
         if(this.ratingCount == 0){
             this.score = newScore;
             this.ratingCount = 1;
             return;
         }
+        if(isRemoving){
+            if(this.ratingCount == 1){
+                this.score = 0;
+                this.ratingCount = 0;
+                return;
+            }
+            this.score = (this.score * this.ratingCount - newScore) / (this.ratingCount -1);
+            this.ratingCount -= 1;
+            return;
+        }
         this.score = (this.score * this.ratingCount + newScore) / this.ratingCount+1;
         this.ratingCount += 1;
-
     }
 }

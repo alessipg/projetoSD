@@ -30,14 +30,11 @@ public class MovieRepository {
     }
     // TODO:Returning Enum instead token (??)
     public List<Movie> getAll() {
-        EntityManager em = Jpa.getEntityManager();
-        try {
+        try (EntityManager em = Jpa.getEntityManager()) {
             return em.createQuery(
                     "SELECT DISTINCT m FROM Movie m LEFT JOIN FETCH m.genres",
                     Movie.class
             ).getResultList();
-        } finally {
-            em.close();
         }
     }
     public Optional<Movie> findByTitleDirectorYear(String title, String director, int year) {
@@ -54,11 +51,8 @@ public class MovieRepository {
         }
     }
     public Optional<Movie> findById(int id) {
-        EntityManager em = Jpa.getEntityManager();
-        try {
+        try (EntityManager em = Jpa.getEntityManager()) {
             return Optional.ofNullable(em.find(Movie.class, id));
-        } finally {
-            em.close();
         }
     }
 

@@ -3,21 +3,23 @@ package org.alessipg.client.ui;
 import java.io.IOException;
 import java.util.Optional;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.*;
+import javafx.util.Callback;
 import org.alessipg.client.infra.session.SessionManager;
+import org.alessipg.shared.dto.request.OwnReviewsRequest;
+import org.alessipg.shared.dto.response.OwnReviewsResponse;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.response.UserSelfGetResponse;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
+import org.alessipg.shared.dto.util.ReviewRecord;
 
 public class ProfileViewController {
 
@@ -31,9 +33,27 @@ public class ProfileViewController {
     private Button btnDelete;
     @FXML
     private Button btnBack;
+    @FXML
+    private ListView<ReviewRecord> listReviews;
+    private ReviewRecord selectedReview;
 
     @FXML
     public void initialize() {
+        listReviews.setCellFactory(new Callback<ListView<ReviewRecord>, ListCell<ReviewRecord>>() {
+            @Override
+            public ListCell<ReviewRecord> call(ListView<ReviewRecord> param) {
+                return new ReviewListCell();
+            }
+        });
+        listReviews.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ReviewRecord>() {
+            @Override
+            public void changed(ObservableValue<? extends ReviewRecord> observable, ReviewRecord oldValue,
+                                ReviewRecord newValue) {
+                System.out.println("ListView selection changed from oldValue = "
+                        + oldValue + " to newValue = " + newValue);
+                selectedReview = newValue;
+            }
+        });
         try {
             UserSelfGetResponse res = SessionManager.getInstance().getUserClientService().selfGet();
             if (res.status().equals("200")) {
@@ -50,6 +70,10 @@ public class ProfileViewController {
             alert.setTitle("Erro de conexão");
             alert.setContentText("Não foi possível buscar informações do usuário: " + e.getMessage());
             alert.showAndWait();
+        }
+        try{
+            OwnReviewsRequest request = new OwnReviewsRequest(SessionManager.getInstance().getToken());
+            OwnReviewsResponse response = SessionManager.getInstance().getReviewClientService().getOwnReviews(request);
         }
     }
 

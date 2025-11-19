@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.dto.request.ReviewCreateRequest;
+import org.alessipg.shared.dto.request.ReviewUpdateRequest;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 import org.alessipg.shared.dto.util.ReviewRecord;
@@ -44,10 +45,9 @@ public class ReviewFormViewController {
     private Button btnSubmit;
     @FXML
     private Label lbTitle;
-
     private Integer currentRating = 5;
     private boolean isEditMode = false;
-
+    private ReviewRecord existingReview;
     @FXML
     public void initialize() {
         // Add listener to track rating changes
@@ -66,6 +66,7 @@ public class ReviewFormViewController {
                     if (newWin != null) {
                         Stage stage = (Stage) newWin;
                         ReviewRecord review = (ReviewRecord) stage.getUserData();
+                        existingReview = review;
                         if (review != null) {
                             isEditMode = true;
                             btnSubmit.setText("Salvar");
@@ -80,12 +81,34 @@ public class ReviewFormViewController {
     }
 
     @FXML
-    public void onSubmit() {
+    public void onSubmit() throws IOException {
 
         String title = tfTitle.getText();
         String description = tfDescription.getText();
         if (isEditMode) {
-
+            ReviewUpdateRequest request = new ReviewUpdateRequest(
+                    existingReview.id(),
+                    title,
+                    description,
+                    currentRating,
+                    SessionManager.getInstance().getToken()
+            );
+            StatusResponse response = SessionManager.getInstance().getReviewClientService().update(request);
+            Alert alert;
+            if(response.status().equals("200")){
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Review atualizada");
+                alert.setHeaderText(null);
+                alert.setContentText("Sua review foi atualizada com sucesso!");
+                alert.showAndWait();
+                onBack();
+            } else{
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro ao atualizar review");
+                alert.setHeaderText(response.status());
+                alert.setContentText(response.mensagem());
+                alert.showAndWait();
+            }
         } else {
             ReviewCreateRequest request = new ReviewCreateRequest(
                     title,
@@ -95,6 +118,20 @@ public class ReviewFormViewController {
                     SessionManager.getInstance().getToken()
             );
             StatusResponse response = SessionManager.getInstance().getReviewClientService().create(request);
+            Alert alert;
+            if(response.status().equals("200")){
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Review criada");
+                alert.setHeaderText(null);
+                alert.setContentText("Sua review foi criada com sucesso!");
+                onBack();
+            } else{
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro ao criar review");
+                alert.setHeaderText(response.status());
+                alert.setContentText(response.mensagem());
+            }
+            alert.showAndWait();
         }
         if (currentRating != null) {
             System.out.println("Título: " + title);
