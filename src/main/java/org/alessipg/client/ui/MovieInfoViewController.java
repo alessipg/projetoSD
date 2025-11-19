@@ -6,17 +6,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.shared.dto.response.MovieGetByIdResponse;
+import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 import org.alessipg.shared.dto.util.ReviewRecord;
 
+import javax.print.attribute.standard.DialogTypeSelection;
 import java.io.IOException;
 
 public class MovieInfoViewController {
@@ -114,7 +113,43 @@ public class MovieInfoViewController {
 
     @FXML
     private void onDelete() {
-
+        if(selectedReview == null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Nenhuma review selecionada");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione uma review para deletar.");
+            alert.showAndWait();
+        }
+        else{
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Confirmação de exclusão");
+            confirmationAlert.setHeaderText(null);
+            confirmationAlert.setContentText("Tem certeza que deseja deletar a review selecionada?");
+            ButtonType yesButton = new ButtonType("Sim", ButtonBar.ButtonData.YES);
+            ButtonType noButton = new ButtonType("Não", ButtonBar.ButtonData.NO);
+            confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
+            confirmationAlert.showAndWait().ifPresent(response -> {
+                if (response == yesButton) {
+                    StatusResponse status = SessionManager.getInstance().getReviewClientService()
+                            .delete(selectedReview.id(), SessionManager.getInstance().getToken());
+                    Alert alert;
+                    if(status.status().equals("200")){
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Review deletada");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Sua review foi deletada com sucesso!");
+                        listReviews.getItems().remove(selectedReview);
+                        selectedReview = null;
+                    } else{
+                        alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erro ao deletar review");
+                        alert.setHeaderText(status.status());
+                        alert.setContentText(status.mensagem());
+                    }
+                    alert.showAndWait();
+                }
+            });
+        }
     }
 
     @FXML

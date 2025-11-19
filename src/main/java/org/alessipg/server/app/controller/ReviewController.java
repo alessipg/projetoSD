@@ -24,8 +24,34 @@ public class ReviewController {
         int id = JwtUtil.validarToken(token).getClaim("id").asInt();
         JsonObject jsonReview = json.has("review") ? json.get("review").getAsJsonObject() : null;
         ReviewRecord review = gson.fromJson(jsonReview, ReviewRecord.class);
-        System.out.println(review.toString());
+        if(review == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
         StatusResponse response = reviewService.create(review, id);
+        return gson.toJson(response);
+    }
+
+    public String update(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : null;
+        if (token == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+        int id = JwtUtil.validarToken(token).getClaim("id").asInt();
+        JsonObject jsonReview = json.has("review") ? json.get("review").getAsJsonObject() : null;
+        ReviewRecord review = gson.fromJson(jsonReview, ReviewRecord.class);
+        if(review == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+        StatusResponse response = reviewService.update(review, id);
+        return gson.toJson(response);
+    }
+
+    public String delete(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : null;
+        if (token == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+        int id = JwtUtil.validarToken(token).getClaim("id").asInt();
+        String reviewId = json.has("id") ? json.get("id").getAsString() : null;
+        if(reviewId == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+        StatusResponse response = reviewService.delete(reviewId, id);
         return gson.toJson(response);
     }
 }

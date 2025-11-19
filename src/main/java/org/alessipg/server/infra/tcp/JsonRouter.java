@@ -77,6 +77,8 @@ public class JsonRouter {
                     return MovieController.update(json);
                 case "ADMIN_EDITAR_USUARIO":
                     return UserController.adminUpdate(json);
+                case "EDITAR_REVIEW":
+                    return ReviewController.update(json);
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);
@@ -84,6 +86,8 @@ public class JsonRouter {
                     return MovieController.delete(json);
                 case "ADMIN_EXCLUIR_USUARIO":
                     return UserController.adminDelete(json);
+                    case "EXCLUIR_REVIEW":
+                    return ReviewController.delete(json);
                 default:
                     return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
             }
