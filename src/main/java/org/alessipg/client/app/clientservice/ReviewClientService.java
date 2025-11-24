@@ -8,6 +8,7 @@ import org.alessipg.shared.dto.request.OwnReviewsRequest;
 import org.alessipg.shared.dto.request.ReviewCreateRequest;
 import org.alessipg.shared.dto.request.ReviewDeleteRequest;
 import org.alessipg.shared.dto.request.ReviewUpdateRequest;
+import org.alessipg.shared.dto.response.OwnReviewsResponse;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.enums.StatusTable;
 
@@ -47,9 +48,29 @@ public class ReviewClientService {
     }
 
     public StatusResponse delete(String id, String token) {
-        return null;
+        try {
+            ReviewDeleteRequest request = new ReviewDeleteRequest(id, token);
+            String json = gson.toJson(request);
+            client.send(json);
+            String response = client.receive();
+            if (response == null)
+                return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+            return gson.fromJson(response, StatusResponse.class);
+        } catch (Exception e) {
+            return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public OwnReviewsResponse getOwnReviews(OwnReviewsRequest request) {
+        try {
+            String json = gson.toJson(request);
+            client.send(json);
+            String response = client.receive();
+            if (response == null)
+                return new OwnReviewsResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+            return gson.fromJson(response, OwnReviewsResponse.class);
+        } catch (Exception e) {
+            return new OwnReviewsResponse(StatusTable.INTERNAL_SERVER_ERROR, null);
+        }
     }
 }

@@ -56,6 +56,21 @@ public class MovieRepository {
         }
     }
 
+    public Optional<Movie> findByIdWithReviews(int id) {
+        try (EntityManager em = Jpa.getEntityManager()) {
+            List<Movie> results = em.createQuery(
+                            "SELECT DISTINCT m FROM Movie m " +
+                            "LEFT JOIN FETCH m.reviews r " +
+                            "LEFT JOIN FETCH r.user " +
+                            "WHERE m.id = :id",
+                            Movie.class
+                    )
+                    .setParameter("id", id)
+                    .getResultList();
+            return results.stream().findFirst();
+        }
+    }
+
     public void delete(Movie movie) {
         EntityManager em = Jpa.getEntityManager();
         try {

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.alessipg.server.app.service.ReviewService;
 import org.alessipg.server.util.JwtUtil;
+import org.alessipg.shared.dto.response.OwnReviewsResponse;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.util.ReviewRecord;
 import org.alessipg.shared.enums.StatusTable;
@@ -20,7 +21,7 @@ public class ReviewController {
     public String create(JsonObject json) {
         String token = json.has("token") ? json.get("token").getAsString() : null;
         if (token == null)
-            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
         int id = JwtUtil.validarToken(token).getClaim("id").asInt();
         JsonObject jsonReview = json.has("review") ? json.get("review").getAsJsonObject() : null;
         ReviewRecord review = gson.fromJson(jsonReview, ReviewRecord.class);
@@ -33,7 +34,7 @@ public class ReviewController {
     public String update(JsonObject json) {
         String token = json.has("token") ? json.get("token").getAsString() : null;
         if (token == null)
-            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
         int id = JwtUtil.validarToken(token).getClaim("id").asInt();
         JsonObject jsonReview = json.has("review") ? json.get("review").getAsJsonObject() : null;
         ReviewRecord review = gson.fromJson(jsonReview, ReviewRecord.class);
@@ -46,12 +47,22 @@ public class ReviewController {
     public String delete(JsonObject json) {
         String token = json.has("token") ? json.get("token").getAsString() : null;
         if (token == null)
-            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
         int id = JwtUtil.validarToken(token).getClaim("id").asInt();
         String reviewId = json.has("id") ? json.get("id").getAsString() : null;
         if(reviewId == null)
             return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
         StatusResponse response = reviewService.delete(reviewId, id);
+        System.out.println(response.status());
+        return gson.toJson(response);
+    }
+
+    public String getByUser(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : null;
+        if (token == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
+        int id = JwtUtil.validarToken(token).getClaim("id").asInt();
+        OwnReviewsResponse response = reviewService.getByUser(id);
         return gson.toJson(response);
     }
 }
