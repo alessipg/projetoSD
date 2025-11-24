@@ -2,6 +2,7 @@ package org.alessipg.server.app.service;
 
 import org.alessipg.server.infra.repo.DataAccessException;
 import org.alessipg.server.app.model.User;
+import org.alessipg.server.infra.repo.ReviewRepository;
 import org.alessipg.shared.dto.response.UserGetAllResponse;
 import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
@@ -20,11 +21,14 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
+    private final MovieService movieService;
     private static final Pattern ALNUM_3_20 = Pattern.compile("^[a-zA-Z0-9]{3,20}$");
 
-    public UserService(UserRepository usuarioRepository) {
+    public UserService(UserRepository usuarioRepository, ReviewRepository reviewRepository, MovieService movieService) {
         this.userRepository = usuarioRepository;
-
+        this.reviewRepository = reviewRepository;
+        this.movieService = movieService;
     }
 
     public StatusResponse create(UserRecord user) {
@@ -102,12 +106,27 @@ public class UserService {
             User user = optUser.get();
             if(user.getName().equals("admin"))
                 return new StatusResponse(StatusTable.FORBIDDEN);
+            deleteUserReviews(user.getId());
             userRepository.delete(user);
             ServerView.removeUser(user.getName());
             return new StatusResponse(StatusTable.OK);
         } catch (Exception e) {
             System.out.println("Service - Erro ao apagar usuário: " + e.getMessage());
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void deleteUserReviews(int id) {
+        try{
+            //listar filmes q tem review do user
+            // apagar e atualizar rating dos filmes
+            reviewRepository.getByUserId(id).forEach(review -> {
+                review.getMovie().updateRating(review.getRating(), true);
+                movieService.updateEntity(review.getMovie());
+                reviewRepository.delete(review);
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -167,6 +186,7 @@ public class UserService {
             User user = optUser.get();
             if(user.getName().equals("admin"))
                 return new StatusResponse(StatusTable.FORBIDDEN);
+            deleteUserReviews(user.getId());
             userRepository.delete(user);
             ServerView.removeUser(user.getName());
             return new StatusResponse(StatusTable.OK);

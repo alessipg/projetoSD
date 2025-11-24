@@ -43,8 +43,8 @@ public class ServerContainer implements AutoCloseable {
         this.reviewRepository = new ReviewRepository();
 
         // services
-        this.userService = new UserService(userRepository);
         this.movieService = new MovieService(movieRepository);
+        this.userService = new UserService(userRepository, reviewRepository,movieService);
         this.authService = new AuthService(userService);
         this.reviewService = new ReviewService(movieService, userService, reviewRepository);
 

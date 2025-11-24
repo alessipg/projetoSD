@@ -35,6 +35,7 @@ public class ProfileViewController {
     private Button btnBack;
     @FXML
     private ListView<ReviewRecord> listReviews;
+
     private ReviewRecord selectedReview;
 
     @FXML
@@ -74,6 +75,20 @@ public class ProfileViewController {
         try{
             OwnReviewsRequest request = new OwnReviewsRequest(SessionManager.getInstance().getToken());
             OwnReviewsResponse response = SessionManager.getInstance().getReviewClientService().getOwnReviews(request);
+            if(!response.status().equals("200")){
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Algo deu errado");
+                alert.setHeaderText(response.status());
+                alert.setContentText(response.mensagem());
+                alert.showAndWait();
+                return;
+            }
+            listReviews.getItems().addAll(response.reviews());
+        } catch (Exception e){
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Erro de conexão");
+            alert.setContentText("Não foi possível buscar suas reviews: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 

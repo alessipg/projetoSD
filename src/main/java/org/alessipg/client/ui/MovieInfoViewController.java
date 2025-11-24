@@ -88,6 +88,7 @@ public class MovieInfoViewController {
         lbGenres.setText("Gêneros: " + String.join(", ", movie.genero()));
         lbYear.setText("Ano: " + movie.ano());
         lbSynopsis.setText(movie.sinopse());
+        listReviews.getItems().clear();
         if (movie.reviews() != null && !movie.reviews().isEmpty()) {
             listReviews.getItems().addAll(movie.reviews());
         }
@@ -138,8 +139,7 @@ public class MovieInfoViewController {
                         alert.setTitle("Review deletada");
                         alert.setHeaderText(null);
                         alert.setContentText("Sua review foi deletada com sucesso!");
-                        listReviews.getItems().remove(selectedReview);
-                        selectedReview = null;
+                        loadMovieData(SessionManager.getInstance().getCurrentMovie());
                     } else{
                         alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Erro ao deletar review");

@@ -19,7 +19,7 @@ public record MovieRecord(String id, String titulo, String diretor, String ano, 
         List<ReviewRecord> reviewRecords = reviews == null
                 ? null
                 : reviews.stream()
-                .map(r -> new ReviewRecord(String.valueOf(r.getId()), String.valueOf(r.getMovie().getId()), r.getUser().getName(),
+                .map(r -> new ReviewRecord(String.valueOf(r.getId()), String.valueOf(id), r.getUser().getName(),
                         r.getTitle(), r.getDescription(), r.getFormatedDate(), String.valueOf(r.getRating())))
                 .collect(Collectors.toList());
         return new MovieRecord(String.valueOf(id), titulo, diretor, String.valueOf(ano), generoStrings,

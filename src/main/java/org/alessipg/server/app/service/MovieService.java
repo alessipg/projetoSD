@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.transaction.Transactional;
-import lombok.Getter;
 import org.alessipg.server.infra.repo.MovieRepository;
 import org.alessipg.server.app.model.Movie;
 import org.alessipg.shared.dto.response.MovieGetByIdResponse;
@@ -166,7 +164,7 @@ public class MovieService {
 
     public MovieGetByIdResponse getById(int id) {
         try {
-            Optional<Movie> m = movieRepository.findById(id);
+            Optional<Movie> m = movieRepository.findByIdWithReviews(id);
             if (m.isEmpty()) {
                 return new MovieGetByIdResponse(StatusTable.NOT_FOUND, null);
             }
@@ -183,6 +181,7 @@ public class MovieService {
                             movie.getReviews());
             return new MovieGetByIdResponse(StatusTable.OK, movieRecord);
         } catch (Exception e) {
+            System.out.println("Erro ao buscar filme por id: " + e.getMessage());
             return new MovieGetByIdResponse(StatusTable.BAD, null);
         }
     }
