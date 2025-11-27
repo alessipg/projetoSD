@@ -62,8 +62,8 @@ public class MovieService {
                             m.getGenres(),
                             m.getScore(),
                             m.getRatingCount(),
-                            m.getSynopsis(),
-                            null));
+                            m.getSynopsis(), null
+                            ));
         }
 
         return new MovieGetAllResponse(StatusTable.OK, formmatedMovies);
@@ -178,7 +178,8 @@ public class MovieService {
                             movie.getScore(),
                             movie.getRatingCount(),
                             movie.getSynopsis(),
-                            movie.getReviews());
+                            movie.getReviews()
+                            );
             return new MovieGetByIdResponse(StatusTable.OK, movieRecord);
         } catch (Exception e) {
             System.out.println("Erro ao buscar filme por id: " + e.getMessage());

@@ -78,6 +78,7 @@ public class ReviewService {
             existingReview.setTitle(review.titulo());
             existingReview.setDescription(review.descricao());
             int newRating = Integer.parseInt(review.nota());
+            existingReview.setEdited(true);
             existingReview.setRating(newRating);
             movie.updateRating(newRating, false);
             movieService.updateEntity(movie);
@@ -105,7 +106,9 @@ public class ReviewService {
             return true;
         if (newReview.titulo() == null || newReview.titulo().isEmpty())
             return true;
-        return newReview.descricao() == null || newReview.descricao().isEmpty();
+        if (newReview.descricao() == null || newReview.descricao().isEmpty())
+            return true;
+        return newReview.descricao().length() > 250;
     }
 
 
@@ -165,7 +168,8 @@ public class ReviewService {
                     review.getTitle(),
                     review.getDescription(),
                     review.getFormatedDate(),
-                    String.valueOf(review.getRating())
+                    String.valueOf(review.getRating()),
+                    String.valueOf(review.isEdited())
             )).toList();
             return new OwnReviewsResponse(StatusTable.OK, reviewRecords);
         } catch (Exception e) {
