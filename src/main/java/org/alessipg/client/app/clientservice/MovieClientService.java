@@ -184,6 +184,6 @@ public class MovieClientService {
         } catch (IOException e) {
             return null;
         }
-        return null;//todo: melhorar isso
+        return null;
     }
 }
