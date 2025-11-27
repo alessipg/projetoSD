@@ -1,5 +1,6 @@
 package org.alessipg.client.ui;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -38,10 +39,35 @@ public class ReviewListCell extends ListCell<ReviewRecord> {
             setText(null); // Importante: impede o toString() padrão
             lblTitulo.setText(review.titulo());
             lblInfo.setText("Autor: " + review.nome_usuario());
-            lblNota.setText("Nota: " + review.nota());
+            // Validar o campo 'editado' vindo como String
+            String editadoStr = review.editado();
+            boolean isEditado = false; // padrão: não editado
+            boolean editadoInvalido = false;
+            if (editadoStr == null) {
+                editadoInvalido = true;
+            } else {
+                String s = editadoStr.trim();
+                if ("true".equalsIgnoreCase(s)) {
+                    isEditado = true;
+                } else if (!"false".equalsIgnoreCase(s)) {
+                    // qualquer valor diferente de 'true' ou 'false' é inválido
+                    editadoInvalido = true;
+                }
+            }
+
+            String textoNota = "Nota: " + review.nota() + "   | Data: " + review.data() + (isEditado ? " (editado)" : "");
+            if (editadoInvalido) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro de dado");
+                alert.setHeaderText("Campo 'editado' inválido");
+                alert.setContentText("O valor de 'editado' precisa ser 'true' ou 'false'. Valor recebido: " + editadoStr);
+                alert.show();
+            }
+            lblNota.setText(textoNota);
+
             lbDescricao.setText(review.descricao());
             setGraphic(vbox);
         }
     }
 }
-

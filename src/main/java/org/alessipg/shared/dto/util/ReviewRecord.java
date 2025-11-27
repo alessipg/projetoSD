@@ -7,6 +7,7 @@ public record ReviewRecord (
         String titulo,
         String descricao,
         String data,
-        String nota
+        String nota,
+        String editado
 ){
 }

@@ -10,7 +10,7 @@ public record ReviewUpdateRequest(String operacao, ReviewRecord review, String t
                                int rating,
                                String token) {
         this("EDITAR_REVIEW",
-                new ReviewRecord(id, null, null, title, description, null, String.valueOf(rating)),
+                new ReviewRecord(id, null, null, title, description, null, String.valueOf(rating),null),
                 token);
     }
 }

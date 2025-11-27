@@ -7,6 +7,7 @@ import java.util.List;
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
 import org.alessipg.shared.dto.request.*;
+import org.alessipg.shared.dto.util.ReviewRecord;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
@@ -15,6 +16,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 public class MovieClientService {
 
@@ -158,7 +161,24 @@ public class MovieClientService {
                         return null;
                     }
                     JsonElement movieElement = jsonObject.get("filme");
-                    return gson.fromJson(movieElement, MovieRecord.class);
+                    MovieRecord movie = gson.fromJson(movieElement, MovieRecord.class);
+
+                    Type reviewListType = new TypeToken<List<ReviewRecord>>(){}.getType();
+                    List<ReviewRecord> reviews = jsonObject.has("reviews")
+                            ? gson.fromJson(jsonObject.get("reviews"), reviewListType)
+                            : new ArrayList<>();
+
+                    return new MovieRecord(
+                            movie.id(),
+                            movie.titulo(),
+                            movie.diretor(),
+                            movie.ano(),
+                            movie.genero(),
+                            movie.nota(),
+                            movie.qtd_avaliacoes(),
+                            movie.sinopse(),
+                            reviews
+                    );
                 }
             }
         } catch (IOException e) {
