@@ -56,7 +56,7 @@ public class ReviewService {
 
             // Salvar a review - JPA gerenciará o relacionamento automaticamente
             reviewRepository.save(review);
-            return new StatusResponse(StatusTable.OK);
+            return new StatusResponse(StatusTable.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);

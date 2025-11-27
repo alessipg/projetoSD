@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
+import org.alessipg.shared.dto.util.MovieRecord;
 import org.alessipg.shared.dto.util.ReviewRecord;
 
 public class ProfileViewController {
@@ -33,6 +34,8 @@ public class ProfileViewController {
     private Button btnDelete;
     @FXML
     private Button btnBack;
+    @FXML
+    private Button btnMovie;
     @FXML
     private ListView<ReviewRecord> listReviews;
 
@@ -125,6 +128,34 @@ public class ProfileViewController {
         stage.setScene(new Scene(novaTelaRoot));
     }
 
+    @FXML
+    private void onMovie() throws IOException {
+        if (selectedReview == null) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Nenhuma review selecionada");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione uma review para ver o filme associado.");
+            alert.showAndWait();
+            return;
+        }
+        MovieRecord selectedMovie = SessionManager.getInstance().getMovieClientService().getMovieById(selectedReview.id_filme());
+        if (selectedMovie == null) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Erro ao buscar filme");
+            alert.setHeaderText(null);
+            alert.setContentText("Não foi possível encontrar o filme associado à review selecionada.");
+            alert.showAndWait();
+            return;
+        }
+        openMovieDetailsWindow(selectedMovie);
+    }
+    private void openMovieDetailsWindow(MovieRecord movie) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieInfoView.fxml"));
+        Parent novaTelaRoot = loader.load();
+        Stage stage = (Stage) btnBack.getScene().getWindow();
+        stage.setUserData(movie);
+        stage.setScene(new Scene(novaTelaRoot));
+    }
     @FXML
     private void onDelete() {
         try {

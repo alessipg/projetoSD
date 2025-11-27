@@ -80,6 +80,14 @@ public class MovieInfoViewController {
 
     private void loadMovieData(MovieRecord selectedMovie) {
         MovieRecord movie= SessionManager.getInstance().getMovieClientService().getMovieById(selectedMovie.id());
+        if(movie == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro ao carregar filme");
+            alert.setHeaderText(null);
+            alert.setContentText("Não foi possível carregar os dados do filme selecionado.");
+            alert.showAndWait();
+            return;
+        }
         SessionManager.getInstance().setCurrentMovie(movie);
         lbTitle.setText(movie.titulo());
         lbDirector.setText("Diretor: " + movie.diretor());
