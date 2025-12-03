@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.alessipg.server.infra.repo.MovieRepository;
 import org.alessipg.server.app.model.Movie;
+import org.alessipg.shared.dto.response.MovieGetByIdResponse;
 import org.alessipg.shared.enums.Genre;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
@@ -61,7 +62,8 @@ public class MovieService {
                             m.getGenres(),
                             m.getScore(),
                             m.getRatingCount(),
-                            m.getSynopsis()));
+                            m.getSynopsis(), null
+                            ));
         }
 
         return new MovieGetAllResponse(StatusTable.OK, formmatedMovies);
@@ -80,15 +82,15 @@ public class MovieService {
                     movieRecord.diretor(), Integer.parseInt(movieRecord.ano()));
             if (m.isPresent() && m.get().getId() != Integer.parseInt(movieRecord.id()))
                 return new StatusResponse(StatusTable.ALREADY_EXISTS);
-            Movie movie = movieRepository.findById(Integer.parseInt(movieRecord.id()));
-            if (movie == null)
+            Optional<Movie> movieById = movieRepository.findById(Integer.parseInt(movieRecord.id()));
+            if (movieById.isEmpty())
                 return new StatusResponse(StatusTable.NOT_FOUND);
+            Movie movie = movieById.get();
             movie.setTitle(movieRecord.titulo().trim());
             movie.setDirector(movieRecord.diretor().trim());
             movie.setYear(Integer.parseInt(movieRecord.ano()));
             movie.setGenres(mapGenres(movieRecord.genero()));
             movie.setSynopsis(normalizeSynopsis(movieRecord.sinopse()));
-
             persist(movie);
             return new StatusResponse(StatusTable.OK);
         } catch (IllegalArgumentException e) {
@@ -111,12 +113,12 @@ public class MovieService {
     }
 
     public StatusResponse delete(int id) {
-        Movie movie = movieRepository.findById(id);
-        if (movie == null) {
+        Optional<Movie> movie = movieRepository.findById(id);
+        if (movie.isEmpty())
             return new StatusResponse(StatusTable.NOT_FOUND);
-        }
         try {
-            movieRepository.delete(movie);
+
+            movieRepository.delete(movie.get());
             return new StatusResponse(StatusTable.OK);
         } catch (Exception e) {
             return new StatusResponse(StatusTable.BAD);
@@ -158,5 +160,36 @@ public class MovieService {
 
     private String normalizeSynopsis(String sinopse) {
         return sinopse == null ? "" : sinopse; // maintain spaces, already length-validated
+    }
+
+    public MovieGetByIdResponse getById(int id) {
+        try {
+            Optional<Movie> m = movieRepository.findByIdWithReviews(id);
+            if (m.isEmpty()) {
+                return new MovieGetByIdResponse(StatusTable.NOT_FOUND, null);
+            }
+            Movie movie = m.get();
+            MovieRecord movieRecord = MovieRecord
+                    .fromGenres(movie.getId(),
+                            movie.getTitle(),
+                            movie.getDirector(),
+                            movie.getYear(),
+                            movie.getGenres(),
+                            movie.getScore(),
+                            movie.getRatingCount(),
+                            movie.getSynopsis(),
+                            movie.getReviews()
+                            );
+            return new MovieGetByIdResponse(StatusTable.OK, movieRecord);
+        } catch (Exception e) {
+            System.out.println("Erro ao buscar filme por id: " + e.getMessage());
+            return new MovieGetByIdResponse(StatusTable.BAD, null);
+        }
+    }
+    public void updateEntity(Movie movie) {
+        movieRepository.save(movie);
+    }
+    public Movie getEntityById(int id) {
+        return movieRepository.findById(id).orElse(null);
     }
 }

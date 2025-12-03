@@ -2,10 +2,12 @@ package org.alessipg.server.app.controller;
 
 import java.util.List;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.alessipg.server.app.service.AuthService;
 import org.alessipg.server.app.service.MovieService;
 import org.alessipg.server.util.JwtUtil;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
+import org.alessipg.shared.dto.response.MovieGetByIdResponse;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.shared.dto.util.MovieCreateDto;
 
@@ -74,5 +76,20 @@ public class MovieController {
         StatusResponse status = movieService.delete(id);
         return gson.toJson(status);
         
+    }
+
+    public String getById(JsonObject json) {
+        String token = json.has("token") ? json.get("token").getAsString() : null;
+        if (token == null)
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+        DecodedJWT decodedJWT= JwtUtil.validarToken(token);
+        if(decodedJWT==null)
+            return gson.toJson(new StatusResponse(StatusTable.UNAUTHORIZED));
+        if(json.get("id_filme").getAsString().isEmpty())
+            return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
+
+        int id = Integer.parseInt(json.get("id_filme").getAsString());
+        MovieGetByIdResponse movie = movieService.getById(id);
+        return gson.toJson(movie);
     }
 }

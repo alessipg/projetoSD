@@ -9,7 +9,7 @@ import jakarta.persistence.EntityManager;
 
 public class MovieRepository {
 
-    public Movie save(Movie movie) {
+    public void save(Movie movie) {
         EntityManager em = Jpa.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -19,7 +19,6 @@ public class MovieRepository {
                 movie = em.merge(movie);
             }
             em.getTransaction().commit();
-            return movie;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -31,14 +30,11 @@ public class MovieRepository {
     }
     // TODO:Returning Enum instead token (??)
     public List<Movie> getAll() {
-        EntityManager em = Jpa.getEntityManager();
-        try {
+        try (EntityManager em = Jpa.getEntityManager()) {
             return em.createQuery(
                     "SELECT DISTINCT m FROM Movie m LEFT JOIN FETCH m.genres",
                     Movie.class
             ).getResultList();
-        } finally {
-            em.close();
         }
     }
     public Optional<Movie> findByTitleDirectorYear(String title, String director, int year) {
@@ -54,12 +50,24 @@ public class MovieRepository {
             return results.stream().findFirst();
         }
     }
-    public Movie findById(int id) {
-        EntityManager em = Jpa.getEntityManager();
-        try {
-            return em.find(Movie.class, id);
-        } finally {
-            em.close();
+    public Optional<Movie> findById(int id) {
+        try (EntityManager em = Jpa.getEntityManager()) {
+            return Optional.ofNullable(em.find(Movie.class, id));
+        }
+    }
+
+    public Optional<Movie> findByIdWithReviews(int id) {
+        try (EntityManager em = Jpa.getEntityManager()) {
+            List<Movie> results = em.createQuery(
+                            "SELECT DISTINCT m FROM Movie m " +
+                            "LEFT JOIN FETCH m.reviews r " +
+                            "LEFT JOIN FETCH r.user " +
+                            "WHERE m.id = :id",
+                            Movie.class
+                    )
+                    .setParameter("id", id)
+                    .getResultList();
+            return results.stream().findFirst();
         }
     }
 

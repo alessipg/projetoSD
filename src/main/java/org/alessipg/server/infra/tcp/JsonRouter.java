@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException;
 
 import lombok.Setter;
 
+import org.alessipg.server.app.controller.ReviewController;
 import org.alessipg.shared.enums.StatusTable;
 import org.alessipg.shared.dto.response.StatusResponse;
 import org.alessipg.server.app.controller.AuthController;
@@ -24,11 +25,14 @@ public class JsonRouter {
     private static AuthController AuthController;
     @Setter
     private static MovieController MovieController;
+    @Setter
+    private static ReviewController ReviewController;
+
     private static final Gson gson = new GsonBuilder()
             .create();
     // Validar JSON antes de processar
 
-    public static String parse(String message) {
+    public static String parse(String message, String clientAddress) {
         if (message == null || message.trim().isEmpty()) {
             System.err.println("Empty message received");
             return gson.toJson(new StatusResponse(StatusTable.BAD));
@@ -47,21 +51,27 @@ public class JsonRouter {
             switch (operation) {
                 // Auth
                 case "LOGIN":
-                    return AuthController.login(json);
+                    return AuthController.login(json, clientAddress);
                 case "LOGOUT":
-                    return AuthController.logout(json);
+                    return AuthController.logout(json, clientAddress);
                 // Create
                 case "CRIAR_USUARIO":
                     return UserController.create(json);
                 case "CRIAR_FILME":
                     return MovieController.create(json);
+                case "CRIAR_REVIEW":
+                    return ReviewController.create(json);
                 // Read
                 case "LISTAR_FILMES":
                     return MovieController.getAll();
+                case "BUSCAR_FILME_ID":
+                    return MovieController.getById(json);
                 case "LISTAR_USUARIOS":
                     return UserController.getAll(json);
                 case "LISTAR_PROPRIO_USUARIO":
                     return UserController.selfGet(json);
+                case "LISTAR_REVIEWS_USUARIO":
+                    return ReviewController.getByUser(json);
                 // Update
                 case "EDITAR_PROPRIO_USUARIO":
                     return UserController.update(json);
@@ -69,6 +79,8 @@ public class JsonRouter {
                     return MovieController.update(json);
                 case "ADMIN_EDITAR_USUARIO":
                     return UserController.adminUpdate(json);
+                case "EDITAR_REVIEW":
+                    return ReviewController.update(json);
                 // Delete
                 case "EXCLUIR_PROPRIO_USUARIO":
                     return UserController.selfDelete(json);
@@ -76,6 +88,8 @@ public class JsonRouter {
                     return MovieController.delete(json);
                 case "ADMIN_EXCLUIR_USUARIO":
                     return UserController.adminDelete(json);
+                case "EXCLUIR_REVIEW":
+                    return ReviewController.delete(json);
                 default:
                     return gson.toJson(new StatusResponse(StatusTable.UNPROCESSABLE_ENTITY));
             }

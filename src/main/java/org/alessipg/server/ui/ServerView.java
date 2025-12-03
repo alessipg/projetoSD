@@ -1,20 +1,18 @@
 package org.alessipg.server.ui;
 
+import org.alessipg.server.infra.tcp.ConnectionManager;
 import org.alessipg.server.infra.tcp.TcpServer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerView {
-    private static JList<String> activeUsersList;
+    private static JList<String> activeConnectionsList;
     private static DefaultListModel<String> listModel;
     private static JTextField portField;
     private static JLabel statusLabel;
-    private static List<String> activeUsers = new ArrayList<>();
 
     public static void createAndShowGUI() {
         JFrame jFrame = new JFrame("Server Management Interface");
@@ -80,13 +78,13 @@ public class ServerView {
 
     private static JPanel createCenterPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Active Users"));
+        panel.setBorder(BorderFactory.createTitledBorder("Active Connections"));
 
         listModel = new DefaultListModel<>();
-        activeUsersList = new JList<>(listModel);
-        activeUsersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        activeConnectionsList = new JList<>(listModel);
+        activeConnectionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JScrollPane scrollPane = new JScrollPane(activeUsersList);
+        JScrollPane scrollPane = new JScrollPane(activeConnectionsList);
         scrollPane.setPreferredSize(new Dimension(550, 300));
 
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -105,20 +103,105 @@ public class ServerView {
         return panel;
     }
 
-    public static void addUser(String username) {
-        if (!activeUsers.contains(username)) {
-            activeUsers.add(username);
-            SwingUtilities.invokeLater(() -> {
-                listModel.addElement(username);
-            });
+    /**
+     * Add a new connection to the list (initially without username)
+     */
+    public static void addConnection(String clientAddress) {
+        System.out.println("[ServerView] addConnection called for: " + clientAddress);
+        if (listModel == null) {
+            System.err.println("[ServerView] ERROR: listModel is null! UI not initialized?");
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                String displayText = formatConnectionDisplay(clientAddress, null);
+                System.out.println("[ServerView] Adding to list: " + displayText);
+                listModel.addElement(displayText);
+                System.out.println("[ServerView] Successfully added to list. Total connections: " + listModel.getSize());
+            } catch (Exception e) {
+                System.err.println("[ServerView] ERROR adding connection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Update connection with username after login
+     */
+    public static void updateConnection(String clientAddress, String username) {
+        System.out.println("[ServerView] updateConnection called for: " + clientAddress + " with username: " + username);
+        if (listModel == null) {
+            System.err.println("[ServerView] ERROR: listModel is null! UI not initialized?");
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Find and remove old entry for this client address
+                for (int i = 0; i < listModel.getSize(); i++) {
+                    String element = listModel.getElementAt(i);
+                    if (element.startsWith(clientAddress)) {
+                        System.out.println("[ServerView] Removing old entry: " + element);
+                        listModel.remove(i);
+                        break;
+                    }
+                }
+                // Add updated entry
+                String displayText = formatConnectionDisplay(clientAddress, username);
+                System.out.println("[ServerView] Adding updated entry: " + displayText);
+                listModel.addElement(displayText);
+                System.out.println("[ServerView] Successfully updated. Total connections: " + listModel.getSize());
+            } catch (Exception e) {
+                System.err.println("[ServerView] ERROR updating connection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Remove a connection from the list
+     */
+    public static void removeConnection(String clientAddress) {
+        System.out.println("[ServerView] removeConnection called for: " + clientAddress);
+        if (listModel == null) {
+            System.err.println("[ServerView] ERROR: listModel is null! UI not initialized?");
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                System.out.println("[ServerView] Removing connection: " + clientAddress);
+                for (int i = 0; i < listModel.getSize(); i++) {
+                    String element = listModel.getElementAt(i);
+                    if (element.startsWith(clientAddress)) {
+                        System.out.println("[ServerView] Found and removing: " + element);
+                        listModel.remove(i);
+                        System.out.println("[ServerView] Successfully removed. Total connections: " + listModel.getSize());
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[ServerView] ERROR removing connection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Format connection display as "IP:port - username" or "IP:port - Not logged in"
+     */
+    private static String formatConnectionDisplay(String clientAddress, String username) {
+        if (username != null && !username.isEmpty()) {
+            return clientAddress + " - " + username;
+        } else {
+            return clientAddress + " - Not logged in";
         }
     }
 
-    public static void removeUser(String username) {
-        activeUsers.remove(username);
+    /**
+     * Clear all connections (for server shutdown)
+     */
+    public static void clearAllConnections() {
         SwingUtilities.invokeLater(() -> {
-            System.out.println("removendo "+username);
-            listModel.removeElement(username);
+            listModel.clear();
         });
     }
 

@@ -18,7 +18,8 @@ public record MovieUpdateRequest(
                         movie.genero(),
                         null,
                         null,
-                        movie.sinopse()
+                        movie.sinopse(),
+                        null
                 ),
                 token
         );

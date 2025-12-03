@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Id
@@ -25,10 +27,6 @@ public class User implements Serializable {
         this.id = id;
         this.name = name;
         this.password = password;
-    }
-
-    public User() {
-
     }
 
     public User(String nome, String senha) {

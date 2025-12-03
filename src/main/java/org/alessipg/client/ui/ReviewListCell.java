@@ -12,6 +12,7 @@ public class ReviewListCell extends ListCell<ReviewRecord> {
     private Label lblTitulo = new Label();
     private Label lblInfo = new Label();
     private Label lblNota = new Label();
+    private Label lbDescricao = new Label();
 
     public ReviewListCell() {
         lblTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
@@ -20,8 +21,8 @@ public class ReviewListCell extends ListCell<ReviewRecord> {
             lblInfo.setStyle(isNowSelected ? "-fx-text-fill: white;" : "-fx-text-fill: gray;");
         });
         lblNota.setStyle("-fx-text-fill: #006600; -fx-font-weight: bold;");
-
-        vbox.getChildren().addAll(lblTitulo, lblInfo, lblNota);
+        lbDescricao.setStyle("-fx-wrap-text: true;");
+        vbox.getChildren().addAll(lblTitulo, lblInfo, lblNota, lbDescricao);
 
         HBox.setHgrow(vbox, Priority.ALWAYS);
     }
@@ -34,12 +35,19 @@ public class ReviewListCell extends ListCell<ReviewRecord> {
             setText(null);
             setGraphic(null);
         } else {
-//            lblTitulo.setText(review.titulo() + " (" + review.ano() + ")");
-//            lblInfo.setText("Diretor: " + review.diretor() + " | Gêneros: " +
-//                    String.join(", ", review.genero().stream().map(Object::toString).toList()));
-//            lblNota.setText("Nota: " + review.nota() + " (" + review.qtd_avaliacoes() + " avaliações)");
-//            setGraphic(vbox);
+            setText(null); // Importante: impede o toString() padrão
+            lblTitulo.setText(review.titulo());
+            lblInfo.setText("Autor: " + review.nome_usuario());
+
+            // Determinar se foi editado
+            String editadoStr = review.editado();
+            boolean isEditado = "true".equalsIgnoreCase(editadoStr != null ? editadoStr.trim() : "");
+
+            String textoNota = "Nota: " + review.nota() + "   | Data: " + review.data() + (isEditado ? " (editado)" : "");
+            lblNota.setText(textoNota);
+
+            lbDescricao.setText(review.descricao());
+            setGraphic(vbox);
         }
     }
 }
-

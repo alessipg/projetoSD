@@ -6,12 +6,9 @@ import java.util.List;
 
 import org.alessipg.client.infra.session.SessionManager;
 import org.alessipg.client.infra.tcp.TcpClient;
-import org.alessipg.server.app.model.Movie;
+import org.alessipg.shared.dto.request.*;
+import org.alessipg.shared.dto.util.ReviewRecord;
 import org.alessipg.shared.enums.StatusTable;
-import org.alessipg.shared.dto.request.MovieCreateRequest;
-import org.alessipg.shared.dto.request.MovieDeleteRequest;
-import org.alessipg.shared.dto.request.MovieUpdateRequest;
-import org.alessipg.shared.dto.request.MovieGetAllRequest;
 import org.alessipg.shared.dto.response.MovieGetAllResponse;
 import org.alessipg.shared.dto.util.MovieRecord;
 
@@ -19,6 +16,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 public class MovieClientService {
 
@@ -144,6 +143,76 @@ public class MovieClientService {
             }
         } catch (IOException e) {
             return StatusTable.INTERNAL_SERVER_ERROR;
+        }
+        return null;
+    }
+
+    public MovieRecord getMovieById(String id) {
+        MovieGetByIdRequest msg = new MovieGetByIdRequest(id, SessionManager.getInstance().getToken());
+        String json = gson.toJson(msg);
+        try {
+            client.send(json);
+            String response = client.receive();
+            if (response != null) {
+                JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+                String status = jsonObject.has("status") ? jsonObject.get("status").getAsString() : "";
+                if (status.equals("200")) {
+                    if (!jsonObject.has("filme")) {
+                        return null;
+                    }
+                    JsonElement movieElement = jsonObject.get("filme");
+                    MovieRecord movie = gson.fromJson(movieElement, MovieRecord.class);
+
+                    Type reviewListType = new TypeToken<List<ReviewRecord>>(){}.getType();
+                    List<ReviewRecord> reviews = jsonObject.has("reviews")
+                            ? gson.fromJson(jsonObject.get("reviews"), reviewListType)
+                            : new ArrayList<>();
+
+                    // Validar campo 'editado' das reviews
+                    if (reviews != null) {
+                        for (ReviewRecord review : reviews) {
+                            String editadoStr = review.editado();
+                            if (editadoStr == null) {
+                                javafx.application.Platform.runLater(() -> {
+                                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                                    alert.setTitle("Erro de dado");
+                                    alert.setHeaderText("Campo 'editado' ausente");
+                                    alert.setContentText("O campo 'editado' é obrigatório e deve ser 'true' ou 'false', mas não foi recebido do servidor.");
+                                    alert.show();
+                                });
+                                break; // Mostra apenas uma vez
+                            } else {
+                                String s = editadoStr.trim();
+                                if (!"true".equalsIgnoreCase(s) && !"false".equalsIgnoreCase(s)) {
+                                    final String valorInvalido = editadoStr;
+                                    javafx.application.Platform.runLater(() -> {
+                                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                                        alert.setTitle("Erro de dado");
+                                        alert.setHeaderText("Campo 'editado' inválido");
+                                        alert.setContentText("O valor de 'editado' precisa ser 'true' ou 'false'. Valor recebido: " + valorInvalido);
+                                        alert.show();
+                                    });
+                                    break; // Mostra apenas uma vez
+                                }
+                            }
+                        }
+                    }
+
+                    return new MovieRecord(
+                            movie.id(),
+                            movie.titulo(),
+                            movie.diretor(),
+                            movie.ano(),
+                            movie.genero(),
+                            movie.nota(),
+                            movie.qtd_avaliacoes(),
+                            movie.sinopse(),
+                            reviews
+                    );
+                }
+            }
+        } catch (IOException e) {
+            return null;
         }
         return null;
     }

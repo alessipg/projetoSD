@@ -14,10 +14,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600" prefWidth="800" style="-fx-background-color: #272727;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.ProfileViewController">
+<BorderPane prefHeight="600" prefWidth="800" style="-fx-background-color: #272727;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alessipg.client.ui.ProfileViewController">
 
     <center>
-        <ListView fx:id="listFilmes" />
+        <ListView fx:id="listReviews" />
     </center>
     <left>
         <GridPane prefHeight="226.0" prefWidth="168.0" BorderPane.alignment="CENTER">
@@ -88,5 +88,15 @@
             </padding>
         </GridPane>
     </top>
+   <right>
+      <Button fx:id="btnMovie" mnemonicParsing="false" onAction="#onMovie" text="Ver filme" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </Button>
+   </right>
 
 </BorderPane>

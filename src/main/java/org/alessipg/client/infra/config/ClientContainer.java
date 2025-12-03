@@ -2,6 +2,7 @@ package org.alessipg.client.infra.config;
 
 import org.alessipg.client.app.clientservice.AuthClientService;
 import org.alessipg.client.app.clientservice.MovieClientService;
+import org.alessipg.client.app.clientservice.ReviewClientService;
 import org.alessipg.client.app.clientservice.UserClientService;
 import org.alessipg.client.infra.session.SessionManager;
 
@@ -17,7 +18,8 @@ public class ClientContainer {
         AuthClientService auth = new AuthClientService(gson);
         MovieClientService movie = new MovieClientService(gson);
         UserClientService user = new UserClientService(gson);
-        SessionManager.init(auth, movie, user);
+        ReviewClientService review = new ReviewClientService(gson);
+        SessionManager.init(auth, movie, user, review);
     }
 
     

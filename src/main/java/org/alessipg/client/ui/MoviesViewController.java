@@ -45,17 +45,15 @@ public class MoviesViewController {
         });
         try {
             MovieGetAllResponse movies = SessionManager.getInstance().getMovieClientService().getAll();
-            switch (movies.status()) {
-                case "200":
-                    if (movies.filmes().size() == 0) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Nenhum filme disponível no momento.");
-                        alert.showAndWait();
-                    } else
-                        listMovies.getItems().addAll(movies.filmes());
-                    break;
-                default:
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status()+": " + movies.mensagem());
+            if (movies.status().equals("200")) {
+                if (movies.filmes().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Nenhum filme disponível no momento.");
                     alert.showAndWait();
+                } else
+                    listMovies.getItems().addAll(movies.filmes());
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + movies.status() + ": " + movies.mensagem());
+                alert.showAndWait();
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar filmes: " + e.getMessage());
@@ -64,15 +62,10 @@ public class MoviesViewController {
     }
     private void openMovieDetailsWindow(MovieRecord movie) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/alessipg/client/ui/MovieInfoView.fxml"));
-        Parent movieDetailsRoot = loader.load();
-
-        // Passa o filme selecionado para o controller da nova janela
-
-        Stage stage = new Stage();
+        Parent novaTelaRoot = loader.load();
+        Stage stage = (Stage) listMovies.getScene().getWindow();
         stage.setUserData(movie);
-        stage.setScene(new Scene(movieDetailsRoot));
-        stage.setTitle("Detalhes do Filme");
-        stage.show();
+        stage.setScene(new Scene(novaTelaRoot));
     }
     @FXML
     private void onMyAccount() throws IOException {
