@@ -3,6 +3,7 @@ package org.alessipg.server.app.service;
 import org.alessipg.server.infra.repo.DataAccessException;
 import org.alessipg.server.app.model.User;
 import org.alessipg.server.infra.repo.ReviewRepository;
+import org.alessipg.server.infra.tcp.ConnectionManager;
 import org.alessipg.shared.dto.response.UserGetAllResponse;
 import org.alessipg.shared.dto.util.UserView;
 import org.alessipg.shared.enums.StatusTable;
@@ -108,7 +109,14 @@ public class UserService {
                 return new StatusResponse(StatusTable.FORBIDDEN);
             deleteUserReviews(user.getId());
             userRepository.delete(user);
-            ServerView.removeUser(user.getName());
+
+            // Find and remove connection by username
+            String clientAddress = ConnectionManager.getInstance().findClientAddressByUsername(user.getName());
+            if (clientAddress != null) {
+                ConnectionManager.getInstance().unregisterConnection(clientAddress);
+                ServerView.removeConnection(clientAddress);
+            }
+
             return new StatusResponse(StatusTable.OK);
         } catch (Exception e) {
             System.out.println("Service - Erro ao apagar usuário: " + e.getMessage());
@@ -188,7 +196,14 @@ public class UserService {
                 return new StatusResponse(StatusTable.FORBIDDEN);
             deleteUserReviews(user.getId());
             userRepository.delete(user);
-            ServerView.removeUser(user.getName());
+
+            // Find and remove connection by username
+            String clientAddress = ConnectionManager.getInstance().findClientAddressByUsername(user.getName());
+            if (clientAddress != null) {
+                ConnectionManager.getInstance().unregisterConnection(clientAddress);
+                ServerView.removeConnection(clientAddress);
+            }
+
             return new StatusResponse(StatusTable.OK);
         }catch(Exception e){
             return new StatusResponse(StatusTable.INTERNAL_SERVER_ERROR);

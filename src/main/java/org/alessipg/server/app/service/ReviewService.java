@@ -52,7 +52,6 @@ public class ReviewService {
 
             // Atualizar rating do filme e salvar
             movie.updateRating(review.getRating(), false);
-            movieService.updateEntity(movie);
 
             // Salvar a review - JPA gerenciará o relacionamento automaticamente
             reviewRepository.save(review);

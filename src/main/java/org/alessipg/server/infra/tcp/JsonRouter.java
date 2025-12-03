@@ -32,7 +32,7 @@ public class JsonRouter {
             .create();
     // Validar JSON antes de processar
 
-    public static String parse(String message) {
+    public static String parse(String message, String clientAddress) {
         if (message == null || message.trim().isEmpty()) {
             System.err.println("Empty message received");
             return gson.toJson(new StatusResponse(StatusTable.BAD));
@@ -51,9 +51,9 @@ public class JsonRouter {
             switch (operation) {
                 // Auth
                 case "LOGIN":
-                    return AuthController.login(json);
+                    return AuthController.login(json, clientAddress);
                 case "LOGOUT":
-                    return AuthController.logout(json);
+                    return AuthController.logout(json, clientAddress);
                 // Create
                 case "CRIAR_USUARIO":
                     return UserController.create(json);
