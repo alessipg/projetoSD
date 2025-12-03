@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 
@@ -26,9 +25,10 @@ public class TcpClient {
 
     public void connect() throws IOException, UnknownHostException {
         socket = new Socket();
-        // Set connect and read timeouts to avoid indefinite blocking
+        // Set connect timeout (5 seconds is reasonable for connection)
         socket.connect(new InetSocketAddress(host, port), 5000);
-        socket.setSoTimeout(5000);
+        // Set read timeout to 30 seconds (longer to allow server processing time)
+        socket.setSoTimeout(30000);
         setupStreams();
         System.out.println("Connected to server " + host + ":" + port);
     }
@@ -36,20 +36,33 @@ public class TcpClient {
     public void setupStreams() throws IOException {
         this.in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+        // Enable autoflush (second parameter = true)
         this.out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
-
-        }
+    }
 
     public void disconnect() throws IOException {
         if (socket != null && !socket.isClosed()) {
+            if (out != null) {
+                out.close();
+            }
+            if (in != null) {
+                in.close();
+            }
             socket.close();
             System.out.println("Disconnected from server.");
         }
     }
     
     public void send(String json) throws IOException {
-        System.out.println("Sending: "+ json);
+        if (out == null || socket.isClosed()) {
+            throw new IOException("Socket is not connected");
+        }
+        System.out.println("Sending: " + json);
         out.println(json);
+        out.flush(); // Explicit flush to ensure data is sent immediately
+        if (out.checkError()) {
+            throw new IOException("Error writing to socket");
+        }
     }
 
     public String receive() throws IOException {
