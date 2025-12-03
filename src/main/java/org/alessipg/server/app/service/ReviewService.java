@@ -36,7 +36,7 @@ public class ReviewService {
             if (isInvalidReview(newReview,true))
                 return new StatusResponse(StatusTable.INVALID_INPUT);
             if(user.isAdmin())
-                return new StatusResponse(StatusTable.UNAUTHORIZED);
+                return new StatusResponse(StatusTable.FORBIDDEN);
             if(reviewRepository.existsByUserIdAndMovieId(id, movie.getId()))
                 return new StatusResponse(StatusTable.ALREADY_EXISTS);
             Review review = new Review(
@@ -72,6 +72,8 @@ public class ReviewService {
             Movie movie = rev.get().getMovie();
             Review existingReview = rev.get();
             User user = existingReview.getUser();
+            if(user.isAdmin())
+                return new StatusResponse(StatusTable.FORBIDDEN);
             if(user.getId() != id)
                 return new StatusResponse(StatusTable.UNAUTHORIZED);
             movie.updateRating(existingReview.getRating(), true);
@@ -104,9 +106,13 @@ public class ReviewService {
         }
         if (rating < 1 || rating > 5)
             return true;
-        if (newReview.titulo() == null || newReview.titulo().isEmpty())
+
+        // Validação do título: deve ter entre 3 e 50 caracteres
+        if (newReview.titulo() == null || newReview.titulo().length() < 3 || newReview.titulo().length() > 50)
             return true;
-        if (newReview.descricao() == null || newReview.descricao().isEmpty())
+
+        // Validação da descrição: pode ser vazia (não nula) ou ter até 250 caracteres
+        if (newReview.descricao() == null)
             return true;
         return newReview.descricao().length() > 250;
     }
